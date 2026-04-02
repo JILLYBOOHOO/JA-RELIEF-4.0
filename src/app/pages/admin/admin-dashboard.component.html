@@ -219,7 +219,6 @@
                     </div>
                 </div>
             </div>
-        </div>
             <!-- Recent Survivor Requests -->
             <div class="bg-[#1e293b] p-6 rounded-3xl border border-white/5 shadow-xl space-y-4">
                 <div class="flex items-center justify-between">
@@ -228,19 +227,19 @@
                 </div>
                 <div class="divide-y divide-white/5 mt-2">
                     <div *ngFor="let req of allRequests" class="py-4 flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-[#0f172a] flex items-center justify-center text-rose-400 border border-white/5">
+                        <div class="flex items-center gap-4 min-w-0">
+                            <div class="w-10 h-10 shrink-0 rounded-xl bg-[#0f172a] flex items-center justify-center text-rose-400 border border-white/5">
                                 <span class="material-symbols-outlined">person</span>
                             </div>
                             <div class="min-w-0">
                                 <p class="text-sm font-bold text-white truncate">{{ req.requesterName }}</p>
-                                <p class="text-[10px] text-slate-400">{{ req.location }}</p>
+                                <p class="text-[10px] text-slate-400 truncate">{{ req.location }}</p>
                                 <div class="flex gap-1 flex-wrap mt-1.5">
                                     <span *ngFor="let item of req.items" class="text-[9px] font-black uppercase bg-[#0f172a] text-slate-300 px-2 py-0.5 rounded border border-white/5">{{ item.name }} ({{ item.quantity }})</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex flex-col gap-1 items-end">
+                        <div class="flex flex-col gap-1 items-end shrink-0">
                             <button *ngFor="let item of req.items" (click)="item.status === 'pending' ? markAsReceived(req, item) : null" 
                                     class="px-3 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all shadow-lg" 
                                     [ngClass]="{'bg-rose-500 text-white cursor-pointer hover:bg-rose-600 shadow-rose-500/10': item.status === 'pending', 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-default shadow-none': item.status !== 'pending'}">
