@@ -16,7 +16,8 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      this.isDashboard = event.urlAfterRedirects.includes('/dashboard');
+      const url = event.urlAfterRedirects;
+      this.isDashboard = url.includes('/dashboard') || url.includes('/admin');
     });
   }
 
