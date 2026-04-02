@@ -45,25 +45,24 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   categorizedItems = [
     {
-      category: 'Liquid',
+      category: 'Beverages/Liquids',
       icon: '🧃',
       items: [
         { name: 'Water', icon: '💧', checked: false },
-        { name: 'Juice', icon: '🧃', checked: false },
         { name: 'Syrup', icon: '🍯', checked: false },
+        { name: 'Juice / Tin Juice', icon: '🧃', checked: false },
+        { name: 'Malta', icon: '🥤', checked: false },
         { name: 'Oil', icon: '🛢️', checked: false }
       ]
     },
     {
-      category: 'Dry Food',
+      category: 'Staples & Grains',
       icon: '🌾',
       items: [
-        { name: 'Oats', icon: '🥣', checked: false },
-        { name: 'Macaroni', icon: '🍝', checked: false },
-        { name: 'Noodles', icon: '🍜', checked: false },
-        { name: 'Flour', icon: '🌾', checked: false },
-        { name: 'Rice', icon: '🍚', checked: false },
-        { name: 'Cornmeal', icon: '🌽', checked: false },
+        { name: 'Rice / Flour', icon: '🌾', checked: false },
+        { name: 'Sugar / Cornmeal', icon: '🌽', checked: false },
+        { name: 'Oats / Noodles', icon: '🥣', checked: false },
+        { name: 'Macaroni and Cheese', icon: '🍝', checked: false },
         { name: 'Cornflakes', icon: '🥣', checked: false }
       ]
     },
@@ -71,13 +70,15 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
       category: 'Canned/Tin Items',
       icon: '🥫',
       items: [
+        { name: 'Tin Milk', icon: '🥛', checked: false },
         { name: 'Baked Beans', icon: '🥫', checked: false },
         { name: 'Red Peas', icon: '🫘', checked: false },
         { name: 'Broad Bean', icon: '🫘', checked: false },
-        { name: 'Sardines', icon: '🐟', checked: false },
-        { name: 'Tin Mackerel', icon: '🐟', checked: false },
-        { name: 'Spam', icon: '🍖', checked: false },
         { name: 'Corned Beef', icon: '🥩', checked: false },
+        { name: 'Tin Mackerel', icon: '🐟', checked: false },
+        { name: 'Sardines', icon: '🐟', checked: false },
+        { name: 'Tuna', icon: '🐟', checked: false },
+        { name: 'Spam', icon: '🍖', checked: false },
         { name: 'Sausages', icon: '🌭', checked: false }
       ]
     },

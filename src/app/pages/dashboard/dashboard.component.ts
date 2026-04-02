@@ -23,14 +23,41 @@ export class DashboardComponent implements OnInit {
 
   categorizedPantryItems = [
     {
-      category: 'Food & Water',
+      category: 'Beverages/Liquids',
       priority: 'Priority 01',
       icon: 'water_drop',
       items: [
-        { name: 'Potable Water (Gal)', icon: '💧' },
-        { name: 'Dry Grains (Rice)', icon: '🌾' },
-        { name: 'Canned Proteins', icon: '🥫' },
-        { name: 'Hi-Cal Biscuits', icon: '🍪' }
+        { name: 'Water', icon: '💧' },
+        { name: 'Syrup', icon: '🍯' },
+        { name: 'Juice / Tin Juice', icon: '🧃' },
+        { name: 'Malta', icon: '🥤' }
+      ]
+    },
+    {
+      category: 'Staples & Grains',
+      priority: 'Priority 02',
+      icon: '🌾',
+      items: [
+        { name: 'Rice / Flour', icon: '🌾' },
+        { name: 'Sugar / Cornmeal', icon: '🌽' },
+        { name: 'Oats / Noodles', icon: '🥣' },
+        { name: 'Macaroni & Cheese', icon: '🍝' }
+      ]
+    },
+    {
+      category: 'Canned/Tin Items',
+      priority: 'Priority 03',
+      icon: '🥫',
+      items: [
+        { name: 'Tin Milk', icon: '🥛' },
+        { name: 'Baked Beans', icon: '🥫' },
+        { name: 'Red Peas', icon: '🫘' },
+        { name: 'Corned Beef', icon: '🥩' },
+        { name: 'Tin Mackerel', icon: '🐟' },
+        { name: 'Sardines', icon: '🐟' },
+        { name: 'Tuna', icon: '🐟' },
+        { name: 'Spam', icon: '🍖' },
+        { name: 'Sausages', icon: '🌭' }
       ]
     },
     {
