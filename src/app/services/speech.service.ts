@@ -1,13 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SpeechService {
     private recognition: any;
-    private isListeningSource = new Subject<boolean>();
+    private isListeningSource = new BehaviorSubject<boolean>(false);
     isListening$ = this.isListeningSource.asObservable();
     private lastProcessedIndex = -1;
 
@@ -30,19 +30,57 @@ export class SpeechService {
                 }
             };
 
-            this.recognition.onend = () => {
-                this.isListeningSource.next(false);
+            this.recognition.onstart = () => {
+                this.zone.run(() => this.isListeningSource.next(true));
+                (this.recognition as any).started = true;
             };
+
+            this.recognition.onerror = (event: any) => {
+                console.error('Speech recognition error:', event.error);
+                if (event.error === 'not-allowed') {
+                    this.speak('Microphone access denied. Please allow microphone permissions in your browser.');
+                }
+                this.zone.run(() => this.isListeningSource.next(false));
+                (this.recognition as any).started = false;
+            };
+
+            this.recognition.onend = () => {
+                this.zone.run(() => this.isListeningSource.next(false));
+                (this.recognition as any).started = false;
+            };
+        }
+
+        // Pre-load and lock in the best female voice
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                this.getNaturalVoice(); // Trigger caching
+            };
+            this.getNaturalVoice();
         }
     }
 
+    private cachedVoice: SpeechSynthesisVoice | null = null;
+
     private getNaturalVoice(): SpeechSynthesisVoice | null {
+        if (this.cachedVoice) return this.cachedVoice;
+        
         const voices = window.speechSynthesis.getVoices();
-        // Look for "Google" or "Premium" or just specific English variants
-        return voices.find(v => v.name.includes('Google') && v.lang.startsWith('en')) ||
-            voices.find(v => v.name.includes('Natural') && v.lang.startsWith('en')) ||
+        if (voices.length === 0) return null;
+
+        // Strict priority for professional female voices
+        const femaleVoice = 
+            // 1. Google/Online Premium Female voices
+            voices.find(v => v.name.toLowerCase().includes('female') && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'))) ||
+            // 2. Well-known Female Voice names
+            voices.find(v => (v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Susan') || v.name.includes('Victoria') || v.name.includes('Hazel') || v.name.includes('Catherine')) && v.lang.includes('en')) ||
+            // 3. Any standard Female voice
+            voices.find(v => v.name.toLowerCase().includes('female') && v.lang.includes('en')) ||
+            // 4. Fallback to any English voice (risky but better than nothing)
             voices.find(v => v.lang.startsWith('en')) ||
-            voices[0] || null;
+            voices[0];
+            
+        this.cachedVoice = femaleVoice;
+        return femaleVoice;
     }
 
     speak(text: string): void {
@@ -51,8 +89,12 @@ export class SpeechService {
             const utterance = new SpeechSynthesisUtterance(text);
             const voice = this.getNaturalVoice();
             if (voice) utterance.voice = voice;
-            utterance.rate = 1;
-            utterance.pitch = 1;
+            
+            // Refined feminine pitch and rate for consistency
+            utterance.rate = 1.0; 
+            utterance.pitch = 1.1; // Slightly higher pitch for clarity/femininity
+            utterance.volume = 1;
+            
             window.speechSynthesis.speak(utterance);
         }
     }
@@ -88,8 +130,6 @@ export class SpeechService {
             if ((this.recognition as any).started) return;
             this.lastProcessedIndex = -1; // Reset to prevent processing old results
             this.recognition.start();
-            (this.recognition as any).started = true;
-            this.isListeningSource.next(true);
             if (!this.isFieldInputMode) this.speak('Voice navigation enabled.');
         } catch (e) {
             console.error('Speech recognition error:', e);
@@ -99,10 +139,8 @@ export class SpeechService {
     private stopListening(): void {
         if (this.recognition) {
             this.recognition.abort();
-            (this.recognition as any).started = false;
         }
         if (!this.isFieldInputMode) window.speechSynthesis.cancel();
-        this.isListeningSource.next(false);
         if (!this.isFieldInputMode) this.speak('Voice navigation disabled.');
     }
 
@@ -119,26 +157,35 @@ export class SpeechService {
         }
 
         this.zone.run(() => {
-            // Enhanced keyword matching
-            if (input.includes('home')) {
+            // Enhanced keyword matching with Jamaican accent/phonetic support
+            if (input.includes('home') || input.includes('om')) {
                 this.router.navigate(['/']);
                 this.speak('Navigating home');
-            } else if (input.includes('wifi') || input.includes('eifi') || input.includes('wi fi') || input.includes('voucher')) {
+            } else if (input.includes('get wifi') || input.includes('wifi access') || input.includes('wifi') || input.includes('eifi') || input.includes('waifai')) {
                 this.router.navigate(['/wifi-access']);
                 this.speak('Opening WiFi access');
-            } else if (input.includes('donate')) {
+            } else if (input.includes('donate items') || input.includes('donate item') || input.includes('donate itme') || input.includes('donte item') || input.includes('donation items')) {
+                this.router.navigate(['/donate'], { queryParams: { type: 'in-kind' } });
+                this.speak('Opening Donate Items portal');
+            } else if (input.includes('monetary') || input.includes('donate') || input.includes('donte')) {
                 this.router.navigate(['/donate']);
-                this.speak('Opening donation page');
-            } else if (input.includes('login') || input.includes('log in')) {
+                this.speak('Opening Monetary Donations portal');
+            } else if (input.includes('login') || input.includes('log in') || input.includes('lagin')) {
                 this.router.navigate(['/login']);
                 this.speak('Opening login page');
-            } else if (input.includes('dashboard') || input.includes('dash board')) {
+            } else if (input.includes('dashboard') || input.includes('dash board') || input.includes('dashbaad')) {
                 this.router.navigate(['/dashboard']);
                 this.speak('Opening dashboard');
-            } else if (input.includes('register')) {
+            } else if (input.includes('admin') || input.includes('portal') || input.includes('command center')) {
+                this.router.navigate(['/admin']);
+                this.speak('Opening admin portal');
+            } else if (input.includes('register') || input.includes('regista')) {
                 this.router.navigate(['/register']);
                 this.speak('Opening registration');
-            } else if (input.includes('emergency') || input.includes('information') || input.includes('help')) {
+            } else if (input.includes('help') || input.includes('halp') || input.includes('request aid') || input.includes('aid')) {
+                this.router.navigate(['/help']);
+                this.speak('Opening aid request page');
+            } else if (input.includes('emergency') || input.includes('information') || input.includes('info')) {
                 this.router.navigate(['/information']);
                 this.speak('Opening emergency information');
             } else if (input.includes('privacy')) {
@@ -147,23 +194,24 @@ export class SpeechService {
             } else if (input.includes('sitemap')) {
                 this.router.navigate(['/sitemap']);
                 this.speak('Opening site map');
-            } else if (input.includes('scroll down')) {
+            } else if (input.includes('scroll down') || input.includes('go down')) {
                 window.scrollBy({ top: 500, behavior: 'smooth' });
                 this.speak('Scrolling down');
-            } else if (input.includes('scroll up')) {
+            } else if (input.includes('scroll up') || input.includes('go up')) {
                 window.scrollBy({ top: -500, behavior: 'smooth' });
                 this.speak('Scrolling up');
-            } else if (input.includes('submit') || input.includes('confirm') || input.includes('pantry request')) {
+            } else if (input.includes('submit') || input.includes('confirm') || input.includes('done')) {
                 const submitBtn = document.querySelector('button[type="submit"], .submit-btn, .signature-gradient') as HTMLElement;
                 if (submitBtn) {
                     submitBtn.click();
                     this.speak('Submitting form');
                 }
-            } else if (input.includes('back')) {
+            } else if (input.includes('back') || input.includes('go back')) {
                 window.history.back();
                 this.speak('Going back');
             } else {
                 console.log('No command matched for:', input);
+                this.speak('Sorry, I did not recognize that command. Please try home, donate, or help.');
             }
         });
     }

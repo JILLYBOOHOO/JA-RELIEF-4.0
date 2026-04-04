@@ -1,7 +1,7 @@
 .chatbot-widget {
   position: fixed;
   bottom: 24px;
-  right: 400px; /* Shifted left to clear the Request Summary sidebar */
+  right: 24px; /* Aligned to the bottom-right corner */
   z-index: 50; /* Above sidebar content but below overlays */
   font-family: 'Outfit', 'Inter', sans-serif;
 }

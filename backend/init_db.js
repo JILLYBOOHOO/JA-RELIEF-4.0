@@ -117,14 +117,33 @@ async function init() {
   `);
 
   const bcrypt = require('bcrypt');
-  const [adminRows] = await connection.query('SELECT * FROM admins WHERE idNumber = "123456"');
+  // Secure Admin Credentials (non-sequential to pass new validation)
+  const secureAdminId = "842931";
+  const secureAdminPwd = "adminpassword123";
+
+  const [adminRows] = await connection.query('SELECT * FROM admins WHERE idNumber = ?', [secureAdminId]);
   if (adminRows.length === 0) {
-    const hashedPassword = await bcrypt.hash('adminpassword', 10);
-    await connection.query('INSERT INTO admins (idNumber, password) VALUES (?, ?)', ['123456', hashedPassword]);
-    console.log('✅ Default admin created: ID Number "123456", password "adminpassword"');
+    const hashedPassword = await bcrypt.hash(secureAdminPwd, 10);
+    await connection.query('INSERT INTO admins (idNumber, password) VALUES (?, ?)', [secureAdminId, hashedPassword]);
+    console.log(`✅ Secure admin created: ID Number "${secureAdminId}", password "${secureAdminPwd}"`);
+    
+    // Optional: Remove the legacy sequential admin if it exists
+    await connection.query('DELETE FROM admins WHERE idNumber = "123456"');
   }
 
-  console.log('✅ Database and tables initialized successfully');
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS survivor_requests (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      requesterName VARCHAR(255) NOT NULL,
+      location VARCHAR(255),
+      items TEXT, -- JSON string of {name, quantity, status}
+      lat DECIMAL(10, 8),
+      lng DECIMAL(11, 8),
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  console.log('Database tables initialized successfully');
   await connection.end();
 }
 

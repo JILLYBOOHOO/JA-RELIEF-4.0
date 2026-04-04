@@ -51,10 +51,155 @@ body.dark-theme .border-slate-200 {
     border-color: #3e4a3c !important;
 }
 
+/* Dark mode: Emergency Medical Section (Registration Page) - High Contrast Yellow */
+body.dark-theme .text-emerald-900 {
+    color: #FED100 !important; /* Jamaica Gold - high contrast */
+}
+body.dark-theme .text-emerald-800\/70 {
+    color: rgba(254, 209, 0, 0.85) !important;
+}
+body.dark-theme .text-emerald-700\/60 {
+    color: rgba(254, 209, 0, 0.75) !important;
+}
+body.dark-theme .text-emerald-600 {
+    color: #FED100 !important; /* Jamaica Gold */
+}
+body.dark-theme .border-emerald-100 {
+    border-color: #3e4a3c !important;
+}
+body.dark-theme .bg-emerald-50 {
+    background-color: #1a2e1a !important;
+}
+body.dark-theme .border-emerald-200 {
+    border-color: #3e4a3c !important;
+}
+body.dark-theme .bg-emerald-100 {
+    background-color: #1a2e1a !important;
+}
+body.dark-theme .text-black {
+    color: #FED100 !important; /* Jamaica Gold */
+}
+body.dark-theme .text-zinc-800 {
+    color: #f5f5f5 !important;
+}
+body.dark-theme .text-zinc-500 {
+    color: #d4d4d8 !important;
+}
+
+/* High Contrast Dark Mode for Donation/Dashboard Cards */
+body.dark-theme .bg-surface-container,
+body.dark-theme .bg-surface-container-low,
+body.dark-theme .bg-surface-container-lowest,
+body.dark-theme .bg-surface-container-high,
+body.dark-theme .bg-surface-container-highest {
+    background-color: #000000 !important; /* Pure black for high contrast */
+    color: #ffffff !important;
+    border-color: #333333 !important;
+}
+
+body.dark-theme .bg-white {
+    background-color: #0c0d0c !important; /* Very dark green/black */
+    color: #ffffff !important;
+}
+
+body.dark-theme .item-card {
+    background-color: #111111 !important;
+    border-color: #333333 !important;
+}
+
+body.dark-theme .item-card:hover {
+    background-color: #1a1c1a !important;
+}
+
+body.dark-theme .text-jamaica-black {
+    color: #ffffff !important;
+}
+
+/* High Contrast for Step Headers */
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4 {
+    color: #FED100 !important; /* Jamaica Gold for all headers in dark mode for maximum visibility */
+}
+
+body.dark-theme .bg-surface {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+body.dark-theme .text-on-surface {
+    color: #f1f3f1 !important;
+}
+
+/* Specifically for Donation Page "Step" labels that might use labels */
+body.dark-theme .amount-selector label,
+body.dark-theme .top-donor-info h3,
+body.dark-theme .payment-methods-section h3 {
+    color: #FED100 !important;
+}
+
+body.dark-theme .mission-text {
+    color: #ffffff !important;
+}
+
 /* Accessibility Focus States */
 :focus-visible {
     outline: 4px solid var(--jamaica-gold, #fed100);
     outline-offset: 4px;
+}
+
+/* Page Guide (Driver.js) Visibility Enhancements */
+.driver-popover-close-btn {
+    color: #ef4444 !important; /* Prominent red for the X */
+    font-size: 24px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease !important;
+    padding: 4px !important;
+}
+
+.driver-popover-close-btn:hover {
+    color: #dc2626 !important;
+    transform: scale(1.2) rotate(90deg) !important;
+}
+
+.driver-popover-footer {
+    border-top: 1px solid rgba(0,0,0,0.1) !important;
+    padding-top: 10px !important;
+}
+
+body.dark-theme .driver-popover {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+    border: 2px solid #FED100 !important;
+}
+
+body.dark-theme .driver-popover-title {
+    color: #FED100 !important;
+}
+
+body.dark-theme .driver-popover-description {
+    color: #f1f3f1 !important;
+}
+
+/* Enhanced Focus Highlight for Active Guide Elements */
+.driver-active-element {
+    outline: 8px solid #FED100 !important;
+    outline-offset: 8px !important;
+    transition: outline-offset 0.3s ease !important;
+    z-index: 100002 !important;
+}
+
+/* Pulse animation for the active element to draw attention */
+@keyframes pulse-focus {
+    0% { outline-color: #FED100; outline-offset: 8px; }
+    50% { outline-color: #ffffff; outline-offset: 12px; }
+    100% { outline-color: #FED100; outline-offset: 8px; }
+}
+
+.driver-active-element {
+    animation: pulse-focus 2s infinite ease-in-out !important;
 }
 
 .sr-only {
@@ -134,17 +279,19 @@ img, video {
 /* Global Font Size Controls */
 .font-size-large p, .font-size-large span, .font-size-large a, .font-size-large li, .font-size-large label, .font-size-large button {
     font-size: 1.25em !important;
+    line-height: 1.5 !important;
 }
-.font-size-large h1 { font-size: 3rem !important; }
-.font-size-large h2 { font-size: 2.5rem !important; }
-.font-size-large h3 { font-size: 2rem !important; }
+.font-size-large h1 { font-size: 3rem !important; line-height: 1.2 !important; }
+.font-size-large h2 { font-size: 2.5rem !important; line-height: 1.3 !important; }
+.font-size-large h3 { font-size: 2rem !important; line-height: 1.3 !important; }
 
 .font-size-huge p, .font-size-huge span, .font-size-huge a, .font-size-huge li, .font-size-huge label, .font-size-huge button {
     font-size: 1.5em !important;
+    line-height: 1.5 !important;
 }
-.font-size-huge h1 { font-size: 4rem !important; }
-.font-size-huge h2 { font-size: 3.5rem !important; }
-.font-size-huge h3 { font-size: 3rem !important; }
+.font-size-huge h1 { font-size: 4rem !important; line-height: 1.2 !important; }
+.font-size-huge h2 { font-size: 3.5rem !important; line-height: 1.3 !important; }
+.font-size-huge h3 { font-size: 3rem !important; line-height: 1.3 !important; }
 
 /* Increase specific donation page field labels when scaled */
 .font-size-huge .form-field label {

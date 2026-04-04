@@ -3,6 +3,7 @@
 
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgOptimizedImage } from '@angular/common';
 
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -64,6 +65,7 @@ import { AiChatbotComponent } from './components/ai-chatbot/ai-chatbot.component
     ReactiveFormsModule,   // ✅ MUST BE HERE
     HttpClientModule,
     AppRoutingModule,
+    NgOptimizedImage,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'

@@ -11,7 +11,7 @@ export interface HazardReport {
   mediaLink?: string;
   mediaPath?: string;
   status?: string;
-  createdAt?: Date;
+  createdAt?: string;
 }
 
 @Injectable({

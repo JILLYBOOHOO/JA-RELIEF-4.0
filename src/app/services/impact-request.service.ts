@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { PersistenceService } from './persistence.service';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface RequestItem {
     name: string;
@@ -40,58 +40,51 @@ export const PARISH_COORDS: { [key: string]: { lat: number, lng: number } } = {
     providedIn: 'root'
 })
 export class ImpactRequestService {
+    private apiUrl = 'http://localhost:3000/api/requests';
     private requestsSubject = new BehaviorSubject<ImpactRequest[]>([]);
     public requests$ = this.requestsSubject.asObservable();
 
-    constructor(private persistenceService: PersistenceService) {
+    constructor(private http: HttpClient) {
         this.loadRequests();
     }
 
     private loadRequests() {
-        const saved = this.persistenceService.restoreForm('impact_requests');
-        if (saved) {
-            this.requestsSubject.next(saved);
-        } else {
-            // Mock some initial data
-            const mockRequests: ImpactRequest[] = [
-                {
-                    id: '1',
-                    requesterName: 'Pam',
-                    location: 'St. Elizabeth',
-                    lat: PARISH_COORDS['St. Elizabeth'].lat,
-                    lng: PARISH_COORDS['St. Elizabeth'].lng,
-                    items: [
-                        { name: 'Rice', quantity: 5, status: 'pending' },
-                        { name: 'Water', quantity: 10, status: 'pending' },
-                        { name: 'Oil', quantity: 2, status: 'pending' }
-                    ],
-                    timestamp: Date.now()
-                }
-            ];
-            this.requestsSubject.next(mockRequests);
-            this.saveRequests(mockRequests);
+      // Fetch from backend
+      this.http.get<any[]>(this.apiUrl).subscribe({
+        next: (rows) => {
+          const reqs = rows.map(r => ({
+            id: r.id.toString(),
+            requesterName: r.requesterName,
+            location: r.location,
+            lat: parseFloat(r.lat),
+            lng: parseFloat(r.lng),
+            items: JSON.parse(r.items),
+            timestamp: new Date(r.createdAt).getTime()
+          }));
+          this.requestsSubject.next(reqs);
+        },
+        error: () => {
+          // Fallback to mock if API fails
+          console.warn('Using mock requests - backend unreachable');
+          this.requestsSubject.next([{
+            id: 'mock-1',
+            requesterName: 'Pam',
+            location: 'St. Elizabeth',
+            lat: PARISH_COORDS['St. Elizabeth'].lat,
+            lng: PARISH_COORDS['St. Elizabeth'].lng,
+            items: [{ name: 'Rice', quantity: 5, status: 'pending' }],
+            timestamp: Date.now()
+          }]);
         }
-    }
-
-    private saveRequests(requests: ImpactRequest[]) {
-        this.persistenceService.saveForm('impact_requests', requests);
+      });
     }
 
     addRequest(request: ImpactRequest) {
-        const current = this.requestsSubject.value;
-        const updated = [...current, request];
-        this.requestsSubject.next(updated);
-        this.saveRequests(updated);
+      this.http.post(this.apiUrl, request).subscribe(() => this.loadRequests());
     }
 
     updateRequest(updatedRequest: ImpactRequest) {
-        const current = this.requestsSubject.value;
-        const index = current.findIndex(r => r.id === updatedRequest.id);
-        if (index !== -1) {
-            current[index] = updatedRequest;
-            this.requestsSubject.next([...current]);
-            this.saveRequests(current);
-        }
+      this.http.put(`${this.apiUrl}/${updatedRequest.id}`, { items: updatedRequest.items }).subscribe(() => this.loadRequests());
     }
 
     getRequests(): ImpactRequest[] {

@@ -1,6 +1,9 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ImpactRequestService, ImpactRequest, RequestItem } from '../../services/impact-request.service';
 import { SpeechService } from '../../services/speech.service';
+import { GuideService } from '../../services/guide.service';
+import { DonationService } from '../../services/donation.service';
 
 declare var L: any;
 
@@ -147,6 +150,26 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
         { name: 'Children Clothing', icon: '👕', checked: false },
         { name: 'Blankets', icon: '🛌', checked: false }
       ]
+    },
+    {
+      category: 'Fresh Fruits',
+      icon: '🍎',
+      items: [
+        { name: 'Orange', icon: '🍊', checked: false },
+        { name: 'Watermelon', icon: '🍉', checked: false },
+        { name: 'Coconut', icon: '🥥', checked: false },
+        { name: 'Ripe Banana', icon: '🍌', checked: false }
+      ]
+    },
+    {
+      category: 'Ground Provision',
+      icon: '🥔',
+      items: [
+        { name: 'Yam', icon: '🥔', checked: false },
+        { name: 'Green Banana', icon: '🍌', checked: false },
+        { name: 'Irish Potatoes', icon: '🥔', checked: false },
+        { name: 'Sweet Potatoes', icon: '🍠', checked: false }
+      ]
     }
   ];
 
@@ -156,7 +179,10 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private impactRequestService: ImpactRequestService,
-    private speechService: SpeechService
+    private speechService: SpeechService,
+    private guideService: GuideService,
+    private donationService: DonationService,
+    private route: ActivatedRoute
   ) { }
 
   activeVoiceField: string = '';
@@ -172,6 +198,15 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    // Handle URL parameters for donation type (e.g., /donate?type=in-kind)
+    this.route.queryParams.subscribe(params => {
+        if (params['type'] === 'in-kind') {
+            this.setDonationType('in-kind');
+        } else if (params['type'] === 'monetary') {
+            this.setDonationType('monetary');
+        }
+    });
+
     this.impactRequestService.requests$.subscribe(requests => {
       this.allRequests = requests;
       if (this.map) this.updateMapMarkers();
@@ -194,7 +229,16 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    if (this.donationType === 'impact-map') this.initMap();
+    if (this.donationType === 'impact-map') {
+      this.initMap();
+    }
+    
+    // Auto-start guide only if first time for THIS view
+    setTimeout(() => {
+        const key = this.donationType === 'monetary' ? '/donate_monetary' : (this.donationType === 'in-kind' ? '/donate_inkind' : '/donate_impact');
+        this.guideService.autoStartIfFirstTime(key);
+    }, 1000);
+
     if (this.donationType === 'monetary') this.initPaymentSystems();
   }
 
@@ -203,11 +247,19 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setDonationType(type: 'monetary' | 'in-kind' | 'impact-map') {
+    const oldType = this.donationType;
     if (this.donationType === 'impact-map' && type !== 'impact-map' && this.map) {
       this.map.remove();
       this.map = null;
     }
     this.donationType = type;
+    
+    // If switching views, trigger the guide only if they haven't seen it for the NEW view
+    if (oldType !== type && (type === 'monetary' || type === 'in-kind')) {
+        const key = type === 'monetary' ? '/donate_monetary' : '/donate_inkind';
+        setTimeout(() => this.guideService.autoStartIfFirstTime(key), 800);
+    }
+
     if (type === 'impact-map') setTimeout(() => this.initMap(), 100);
     if (type === 'monetary') setTimeout(() => this.initPaymentSystems(), 100);
   }
@@ -296,8 +348,22 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleSuccess() {
-    this.showSuccessModal = true;
-    this.loading = false;
+    this.donationService.addMonetaryDonation({
+      amount: this.donationAmount,
+      donorName: this.donorName,
+      donorPhone: this.donorPhone,
+      donorEmail: this.donorEmail
+    }).subscribe({
+      next: () => {
+        this.showSuccessModal = true;
+        this.loading = false;
+      },
+      error: () => {
+        this.showAlert('Donation processed but failed to record in dashboard.');
+        this.showSuccessModal = true; 
+        this.loading = false;
+      }
+    });
   }
 
   private initMap() {
@@ -354,6 +420,17 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.selectedRequest) return;
     const selectedItemNames = Object.keys(this.itemsToFulfill).filter(name => this.itemsToFulfill[name]);
     if (selectedItemNames.length === 0) return;
+    
+    // Record the pledge in the backend
+    this.donationService.addPledge({
+      donorName: this.donorName,
+      donorPhone: this.donorPhone,
+      donorEmail: this.donorEmail,
+      items: selectedItemNames.map(name => `${name} for ${this.selectedRequest?.requesterName}`),
+      center: this.selectedCenter || 'Local Drop-off',
+      dropOffDate: this.dropOffDate
+    }).subscribe();
+
     const updatedRequest = { ...this.selectedRequest };
     updatedRequest.items = updatedRequest.items.map(item => {
       if (selectedItemNames.includes(item.name)) return { ...item, status: 'fulfilled' as const };
@@ -369,9 +446,23 @@ export class DonateComponent implements OnInit, AfterViewInit, OnDestroy {
     const selected: string[] = [];
     this.categorizedItems.forEach(cat => cat.items.forEach(item => { if (item.checked) selected.push(item.name); }));
     if (selected.length > 0) {
-      this.pledgedItems = selected;
-      this.showSuccessModal = true;
-      this.categorizedItems.forEach(cat => cat.items.forEach(item => item.checked = false));
+      if (!this.validateForm()) return;
+      
+      this.donationService.addPledge({
+        donorName: this.donorName,
+        donorPhone: this.donorPhone,
+        donorEmail: this.donorEmail,
+        items: selected,
+        center: this.selectedCenter,
+        dropOffDate: this.dropOffDate
+      }).subscribe({
+        next: () => {
+          this.pledgedItems = selected;
+          this.showSuccessModal = true;
+          this.categorizedItems.forEach(cat => cat.items.forEach(item => item.checked = false));
+        },
+        error: (err) => this.showAlert('Error recording pledge: ' + err)
+      });
     }
   }
 

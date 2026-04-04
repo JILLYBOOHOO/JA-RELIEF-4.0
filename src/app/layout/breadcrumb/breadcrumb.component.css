@@ -1,8 +1,5 @@
 .breadcrumb-nav {
-  padding: 8px 40px;
-  background: #000;
-  border-bottom: 2px solid #FED100;
-  color: #fff;
+  /* Inherits from the wrapper accessibility toolbar */
 }
 
 .breadcrumb-flex-container {

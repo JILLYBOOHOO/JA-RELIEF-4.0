@@ -1,8 +1,8 @@
 {
-  "name": "ja-relief",
-  "short_name": "ja-relief",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "JA Relief Portal",
+  "short_name": "JA Relief",
+  "theme_color": "#009b3a",
+  "background_color": "#f8faf8",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
@@ -55,5 +55,8 @@
       "type": "image/png",
       "purpose": "maskable any"
     }
-  ]
+  ],
+  "description": "Jamaica Disaster Relief Assistance Platform",
+  "orientation": "portrait",
+  "categories": ["utilities", "medical", "government"]
 }

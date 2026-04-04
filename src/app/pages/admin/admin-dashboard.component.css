@@ -1,4 +1,96 @@
+/* Custom styles for Admin Command Center */
 .glass-effect {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.9);
+}
+
+:host {
+  display: block;
+}
+
+/* Material Symbols configuration */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+}
+
+/* Specific color adjustments to match Tailwind Extend */
+.bg-primary { background-color: #005c37 !important; }
+.text-primary { color: #005c37 !important; }
+.bg-secondary-container { background-color: #ffbb16 !important; }
+.text-secondary { color: #7c5800 !important; }
+.bg-surface { background-color: #f8f9fb !important; }
+.bg-surface-container-lowest { background-color: #ffffff !important; }
+.bg-surface-container-low { background-color: #f2f4f6 !important; }
+.border-outline-variant { border-color: #becabf !important; }
+.text-on-surface-variant { color: #3e4941 !important; }
+.text-on-surface { color: #191c1e !important; }
+.text-error { color: #ba1a1a !important; }
+.bg-error { background-color: #ba1a1a !important; }
+.bg-error-container { background-color: #ffdad6 !important; }
+
+/* Custom Font Families */
+h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+body, .font-body { font-family: 'Inter', sans-serif; }
+
+/* Dashboard Specific Layout */
+.dashboard-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .bg-white { background-color: #1a1c1e !important; }
+    .bg-\[\#f8f9fb\] { background-color: #0d0e10 !important; }
+    .bg-\[\#f2f4f6\], .bg-slate-100 { background-color: #1e2124 !important; }
+    
+    /* Force high contrast text - allow specific title colors to override */
+    h1, h2, h3, h4, p, span, label, td, th { color: #ffffff; opacity: 1 !important; }
+    
+    .text-\[\#005c37\] { color: #4ade80 !important; }
+    .text-primary { color: #4ade80 !important; }
+    .text-secondary { color: #fbbf24 !important; }
+    
+    .border-\[\#becabf\]\/15, .border-slate-100 { border-color: rgba(255, 255, 255, 0.2) !important; }
+    
+    input, textarea, select {
+        background-color: #1e2124 !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+    
+    .glass-effect {
+        background: rgba(26, 28, 30, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* Also support explicit .dark class */
+:host-context(.dark) {
+    .bg-white { background-color: #1a1c1e !important; }
+    .bg-\[\#f8f9fb\] { background-color: #0d0e10 !important; }
+    .bg-\[\#f2f4f6\], .bg-slate-100 { background-color: #1e2124 !important; }
+    
+    /* Force high contrast text */
+    h1, h2, h3, h4, p, span, label, td, th { color: #ffffff; opacity: 1 !important; }
+    
+    .text-\[\#005c37\] { color: #4ade80 !important; }
+    .text-primary { color: #4ade80 !important; }
+    .text-secondary { color: #fbbf24 !important; }
+    
+    .border-\[\#becabf\]\/15, .border-slate-100 { border-color: rgba(255, 255, 255, 0.2) !important; }
+    
+    input, textarea, select {
+        background-color: #1e2124 !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-metrics-grid {
+        grid-template-columns: 1fr;
+    }
 }

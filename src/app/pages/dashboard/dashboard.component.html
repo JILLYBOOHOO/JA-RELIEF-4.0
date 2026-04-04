@@ -54,8 +54,7 @@
                             <p class="text-xs font-medium opacity-80">ID: {{ currentUser?.idNumber || '876409321' }}</p>
                         </div>
                         <div class="flex flex-col items-end">
-                            <img alt="JA Flag" class="w-8 h-5 rounded-sm mb-1 opacity-80"
-                                src="https://upload.wikimedia.org/wikipedia/commons/0/0a/Flag_of_Jamaica.svg" />
+                            <img alt="Flag of Jamaica" src="https://upload.wikimedia.org/wikipedia/commons/0/0a/Flag_of_Jamaica.svg" width="32" height="20" class="w-8 h-5 rounded-sm mb-1 opacity-80" priority />
                             <p class="text-[8px] opacity-40">Tap card to flip</p>
                         </div>
                     </div>
@@ -92,7 +91,6 @@
             <div class="bg-white rounded-[24px] shadow-2xl overflow-hidden border-2 border-slate-900/5 transition-all hover:shadow-red-500/10">
                 <!-- Header Section -->
                 <header class="bg-[#006b25] p-6 relative overflow-hidden">
-                    <!-- Abstract Texture Overlay -->
                     <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(135deg, #000 25%, transparent 25%), linear-gradient(225deg, #000 25%, transparent 25%), linear-gradient(45deg, #000 25%, transparent 25%), linear-gradient(315deg, #000 25%, transparent 25%); background-position: 10px 0, 10px 0, 0 0, 0 0; background-size: 20px 20px; background-repeat: repeat;"></div>
                     <div class="relative z-10 flex justify-between items-start">
                         <div>
@@ -132,7 +130,7 @@
                     </div>
                     <div class="col-span-4 flex flex-col items-center justify-center">
                         <div class="bg-black p-1.5 rounded-lg">
-                            <img alt="QR Code" class="w-16 h-16 grayscale brightness-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp8qOc60fxs5tzYNacDuBqH_W3t3ghlIV5c9cqMxD54hTAwCJUcIC4KgYWadbJeQaGKZU8tKtqSTgNnQym641N2B600bcvKS_LyNP71k-3BFhyuC56x01MK9hHgsSsKZGeW1jNuoLsWromVmJGFZAawpI0C_PzVsjQmAjpApO1Z4XRF8LoRBrWhFLpdI-CDh21hnxTDvhIaRUX8o64nyNiS0-4vCDor6Oa8baobkTA7GbEcbyIT5-uKW2sjQ0JPaAMBb8j5COhejVq"/>
+                            <img alt="Medical Emergency Profile QR Code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=JA_RELIEF_SURVIVOR_" width="64" height="64" class="w-16 h-16 grayscale brightness-125" loading="lazy" />
                         </div>
                         <span class="text-[8px] font-black mt-2 text-center leading-tight text-slate-400 uppercase font-label">Scan for Profile</span>
                     </div>
@@ -214,20 +212,16 @@
                     </button>
                 </footer>
             </div>
-            <p class="mt-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest"> Verified Jamaican Health Record</p>
+            <p class="mt-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Verified Jamaican Health Record</p>
         </div>
     </div>
 
     <!-- Bento Grid Supplies -->
-    <form id="tour-step-3" [formGroup]="pantryForm" (ngSubmit)="submitPantryRequest()">
+    <form id="tour-step-3" [formGroup]="pantryForm" (ngSubmit)="submitPantryRequest()" style="content-visibility: auto; contain-intrinsic-size: 500px;">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <ng-container *ngFor="let cat of categorizedPantryItems; let i = index">
-                <!-- Removed palm image banner -->
-
-
                 <!-- Category Section -->
-                <section
-                    class="bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:bg-surface-bright transition-all group border border-emerald-100/50">
+                <section class="bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:bg-surface-bright transition-all group border border-emerald-100/50">
                     <div class="flex items-center justify-between mb-8">
                         <div class="flex items-center space-x-4">
                             <div class="p-3 bg-surface-container-low rounded-xl group-hover:bg-primary/10 transition-colors">
@@ -238,11 +232,8 @@
                         <span class="text-sm font-label uppercase tracking-widest text-tertiary">{{ cat.priority }}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <label *ngFor="let item of cat.items"
-                            class="flex items-center p-4 bg-surface-container-low rounded-xl cursor-pointer hover:bg-surface-container transition-colors">
-                            <input [formControlName]="item.name"
-                                class="w-5 h-5 rounded-md border-none bg-surface-container-highest text-primary focus:ring-primary mr-3"
-                                type="checkbox" />
+                        <label *ngFor="let item of cat.items" class="flex items-center p-4 bg-surface-container-low rounded-xl cursor-pointer hover:bg-surface-container transition-colors">
+                            <input [formControlName]="item.name" class="w-5 h-5 rounded-md border-none bg-surface-container-highest text-primary focus:ring-primary mr-3" type="checkbox" />
                             <span class="text-lg font-bold flex items-center gap-3">
                                 {{ item.icon }} {{ item.name }}
                             </span>
@@ -252,17 +243,14 @@
             </ng-container>
 
             <!-- Other / Item not listed -->
-            <section
-                class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:bg-surface-bright transition-all border border-emerald-100/50">
+            <section class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:bg-surface-bright transition-all border border-emerald-100/50">
                 <div class="flex items-center space-x-4 mb-4">
                     <div class="p-3 bg-surface-container-low rounded-xl group-hover:bg-primary/10 transition-colors">
                         <span class="material-symbols-outlined text-primary text-4xl">edit_note</span>
                     </div>
                     <h2 class="font-headline text-3xl font-bold tracking-tight text-emerald-900">Other / Specific Needs</h2>
                 </div>
-                <textarea formControlName="otherItems"
-                    class="w-full p-6 rounded-xl border border-emerald-100 bg-surface-container-low focus:ring-primary focus:border-primary text-lg min-h-[120px]"
-                    placeholder="e.g. Specific medication, dietary requirements, or any other essentials not listed above..."></textarea>
+                <textarea formControlName="otherItems" class="w-full p-6 rounded-xl border border-emerald-100 bg-surface-container-low focus:ring-primary focus:border-primary text-lg min-h-[120px]" placeholder="e.g. Specific medication, dietary requirements, or any other essentials not listed above..."></textarea>
             </section>
 
             <!-- Donation Centers Section -->

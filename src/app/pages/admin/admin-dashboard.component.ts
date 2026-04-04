@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WeatherService, WeatherState } from '../../services/weather.service';
 import { UpdateService, AlertUpdate } from '../../services/update.service';
@@ -6,13 +6,15 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { ImpactRequestService, ImpactRequest, RequestItem } from '../../services/impact-request.service';
 import { HazardService, HazardReport } from '../../services/hazard.service';
+import { GuideService } from '../../services/guide.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-admin-dashboard',
     templateUrl: './admin-dashboard.component.html',
     styleUrls: ['./admin-dashboard.component.css']
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, AfterViewInit {
     updateForm: FormGroup;
     editForm: FormGroup;
     currentWeather: WeatherState = 'sunny';
@@ -22,6 +24,13 @@ export class AdminDashboardComponent implements OnInit {
     isEditModalOpen = false;
     editingUpdate: AlertUpdate | null = null;
 
+    stats: any = {
+      monetary: { total: 0 },
+      pledges: [],
+      survivors: [],
+      inventoryCount: 0
+    };
+
     constructor(
         private fb: FormBuilder,
         private weatherService: WeatherService,
@@ -29,7 +38,9 @@ export class AdminDashboardComponent implements OnInit {
         private authService: AuthService,
         private impactRequestService: ImpactRequestService,
         private hazardService: HazardService,
-        private router: Router
+        private router: Router,
+        private guideService: GuideService,
+        private http: HttpClient
     ) {
         this.updateForm = this.fb.group({
             title: ['', Validators.required],
@@ -59,6 +70,22 @@ export class AdminDashboardComponent implements OnInit {
         this.updateService.updates$.subscribe(u => this.updates = u);
         this.impactRequestService.requests$.subscribe(r => this.allRequests = r);
         this.fetchHazardReports();
+        this.fetchDashboardStats();
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.guideService.autoStartIfFirstTime();
+        }, 1000);
+    }
+
+    fetchDashboardStats() {
+      this.http.get('http://localhost:3000/api/admin/dashboard-stats').subscribe({
+        next: (res: any) => {
+          this.stats = res;
+        },
+        error: (err) => console.error('Error fetching admin stats:', err)
+      });
     }
 
     fetchHazardReports() {
@@ -135,3 +162,4 @@ export class AdminDashboardComponent implements OnInit {
         this.router.navigate(['/login']);
     }
 }
+

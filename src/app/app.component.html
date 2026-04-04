@@ -1,10 +1,13 @@
 <app-header></app-header>
+<app-accessibility-toolbar>
+  <div class="breadcrumb-container" style="flex-grow: 1;">
+    <app-breadcrumb></app-breadcrumb>
+  </div>
+</app-accessibility-toolbar>
 
 <main id="main" [class.font-size-large]="currentFontSize === 'large'" [class.font-size-huge]="currentFontSize === 'huge'">
   <div class="page-content-wrapper">
-    <div class="breadcrumb-container">
-      <app-breadcrumb></app-breadcrumb>
-    </div>
+
     <router-outlet></router-outlet>
   </div>
 </main>

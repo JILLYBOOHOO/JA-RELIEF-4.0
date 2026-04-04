@@ -277,3 +277,42 @@ fieldset.form-group legend {
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2) !important;
 }
 
+/* DARK MODE SUPPORT */
+:host-context(.dark-theme) .register-header h1,
+:host-context(.dark-theme) .register-header p,
+:host-context(.dark-theme) label,
+:host-context(.dark-theme) fieldset.form-group legend {
+    color: #f1f3f1;
+}
+
+:host-context(.dark-theme) input[type="text"],
+:host-context(.dark-theme) input[type="tel"],
+:host-context(.dark-theme) input[type="password"],
+:host-context(.dark-theme) input[type="date"],
+:host-context(.dark-theme) select,
+:host-context(.dark-theme) textarea {
+    background-color: #1a1c1a;
+    color: #f1f3f1;
+    border-color: #3e4a3c;
+}
+
+:host-context(.dark-theme) .form-checkbox {
+    background: #1a1c1a;
+    border-color: #3e4a3c;
+}
+
+:host-context(.dark-theme) .form-checkbox label {
+    color: #f1f3f1;
+}
+
+:host-context(.dark-theme) .radio-group label {
+    background: #1a1c1a;
+    border-color: #3e4a3c;
+    color: #f1f3f1;
+}
+
+:host-context(.dark-theme) .radio-group label:hover {
+    background: #242924;
+    border-color: #62df74;
+}
+

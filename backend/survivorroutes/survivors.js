@@ -116,15 +116,15 @@ router.post('/register',
 
 // Login survivor or admin
 router.post('/login', [
-  body('idNumber').notEmpty().withMessage('ID Number is required'),
+  body('identifier').notEmpty().withMessage('Login Identifier is required'),
   body('password').notEmpty().withMessage('Password is required'),
 ], validateResults, async (req, res, next) => {
   try {
-    const { idNumber, password } = req.body;
+    const { identifier, password } = req.body;
     const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_key';
 
-    // First check if an admin matches
-    const [adminRows] = await db.query('SELECT * FROM admins WHERE idNumber = ?', [idNumber]);
+    // First check if an admin matches (admin still uses ID number)
+    const [adminRows] = await db.query('SELECT * FROM admins WHERE idNumber = ?', [identifier]);
     if (adminRows.length > 0) {
       const admin = adminRows[0];
       const isMatch = await bcrypt.compare(password, admin.password);
@@ -150,10 +150,10 @@ router.post('/login', [
       });
     }
 
-    // Otherwise, check survivors
-    const [rows] = await db.query('SELECT * FROM survivors WHERE idNumber = ?', [idNumber]);
+    // Otherwise, check survivors (allow login by Full Name, Contact, or old ID number fallback)
+    const [rows] = await db.query('SELECT * FROM survivors WHERE fullName = ? OR contact = ? OR idNumber = ?', [identifier, identifier, identifier]);
     if (rows.length === 0) {
-      return res.status(401).json({ error: `Account with ID Number '${idNumber}' not found. Please verify your ID or register for a new account.` });
+      return res.status(401).json({ error: `Account not found with provided identifier '${identifier}'. Please check your spelling or register.` });
     }
 
     const survivor = rows[0];
@@ -187,6 +187,36 @@ router.post('/login', [
         doctorContactNumber: survivor.doctorContactNumber
       }
     });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Reset Password (Mock flow)
+router.post('/reset-password', [
+  body('identifier').notEmpty().withMessage('Identifier is required'),
+  body('newPassword').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+], validateResults, async (req, res, next) => {
+  try {
+    const { identifier, newPassword } = req.body;
+    
+    // Check survivors to see if one matches the identifier
+    const [rows] = await db.query('SELECT * FROM survivors WHERE fullName = ? OR contact = ? OR idNumber = ?', [identifier, identifier, identifier]);
+    if (rows.length === 0) {
+      // Don't leak whether the account exists or not in a real system, but for now we'll throw an error
+      return res.status(404).json({ error: 'Account not found. Please check your spelling.' });
+    }
+
+    const survivor = rows[0];
+    
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await db.query('UPDATE survivors SET password = ? WHERE id = ?', [hashedPassword, survivor.id]);
+
+    res.json({ message: 'Password successfully reset' });
 
   } catch (err) {
     next(err);

@@ -24,12 +24,12 @@
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" aria-label="Login form">
             <div class="form-group">
-                <label for="idNumber">{{ isAdminMode ? 'Admin ID' : 'ID Number' }} *</label>
-                <input id="idNumber" type="text" formControlName="idNumber"
-                    [placeholder]="isAdminMode ? 'Enter Admin ID' : 'Enter your ID number'" 
+                <label for="identifier">{{ isAdminMode ? 'Admin ID' : 'Full Name or Phone Number' }} *</label>
+                <input id="identifier" type="text" formControlName="identifier"
+                    [placeholder]="isAdminMode ? 'Enter Admin ID' : 'Enter your name or phone number'" 
                     aria-required="true" />
-                <div class="error" *ngIf="loginForm.get('idNumber')?.invalid && loginForm.get('idNumber')?.touched" role="alert">
-                    {{ isAdminMode ? 'Admin ID' : 'ID Number' }} is required.
+                <div class="error" *ngIf="loginForm.get('identifier')?.invalid && loginForm.get('identifier')?.touched" role="alert">
+                    {{ isAdminMode ? 'Admin ID' : 'Login Name or Phone Number' }} is required.
                 </div>
             </div>
 
@@ -42,6 +42,14 @@
                 </div>
             </div>
 
+            <div class="form-options" *ngIf="!isAdminMode" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-secondary);">
+                    <input type="checkbox" formControlName="rememberMe" style="width: auto; margin: 0; cursor: pointer;" />
+                    Remember me
+                </label>
+                <button type="button" (click)="openForgotPassword()" style="background: none; border: none; color: #059605; font-weight: bold; cursor: pointer; text-decoration: underline; padding: 0;">Forgot Password?</button>
+            </div>
+
             <button type="submit" class="submit-btn" [disabled]="isLoading" [class.admin-btn]="isAdminMode"
                 [attr.aria-label]="isAdminMode ? 'Authenticate Admin' : 'Login to account'">
                 <span *ngIf="!isLoading">{{ isAdminMode ? 'Authenticate' : 'Login' }}</span>
@@ -52,5 +60,31 @@
                 <p>Don't have an account? <a routerLink="/register">Register here</a></p>
             </div>
         </form>
+    </div>
+    <!-- Forgot Password Modal -->
+    <div *ngIf="showForgotPasswordModal" class="modal-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem;">
+        <div class="modal-content" style="background: white; padding: 2rem; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: #333; font-size: 1.5rem;">Reset Password</h3>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 1.5rem;">Enter your Full Name or Phone Number, and a new password.</p>
+            
+            <div *ngIf="resetMessage" style="padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold; font-size: 0.9rem;" [style.backgroundColor]="resetError ? '#fee2e2' : '#dcfce7'" [style.color]="resetError ? '#991b1b' : '#166534'">
+                {{ resetMessage }}
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #333;">Login Name or Phone Number</label>
+                <input type="text" [(ngModel)]="resetIdentifier" placeholder="Enter your identifier" style="width: 100%; padding: 0.8rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;" />
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #333;">New Password</label>
+                <input type="password" [(ngModel)]="resetPassword" placeholder="Minimum 6 characters" style="width: 100%; padding: 0.8rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;" />
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="button" (click)="submitForgotPassword()" style="flex: 1; padding: 0.8rem; background: #059605; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Reset</button>
+                <button type="button" (click)="closeForgotPassword()" style="flex: 1; padding: 0.8rem; background: #e2e8f0; color: #333; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
     </div>
 </section>

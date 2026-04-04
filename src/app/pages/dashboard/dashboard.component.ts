@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService, User } from '../../services/auth.service';
 import { ImpactRequestService, ImpactRequest, RequestItem, PARISH_COORDS } from '../../services/impact-request.service';
+import { GuideService } from '../../services/guide.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -93,6 +94,28 @@ export class DashboardComponent implements OnInit {
         { name: 'Oral Rehydration', icon: '🥤' },
         { name: 'Pain Relief Pack', icon: '💊' }
       ]
+    },
+    {
+      category: 'Fresh Fruits',
+      priority: 'Priority 03',
+      icon: 'nutrition',
+      items: [
+        { name: 'Orange', icon: '🍊' },
+        { name: 'Watermelon', icon: '🍉' },
+        { name: 'Coconut', icon: '🥥' },
+        { name: 'Ripe Banana', icon: '🍌' }
+      ]
+    },
+    {
+      category: 'Ground Provision',
+      priority: 'Priority 02',
+      icon: 'garden_cart',
+      items: [
+        { name: 'Yam', icon: '🥔' },
+        { name: 'Green Banana', icon: '🍌' },
+        { name: 'Irish Potatoes', icon: '🥔' },
+        { name: 'Sweet Potatoes', icon: '🍠' }
+      ]
     }
   ];
 
@@ -157,7 +180,8 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder,
-    private impactRequestService: ImpactRequestService
+    private impactRequestService: ImpactRequestService,
+    private guideService: GuideService
   ) { }
 
   ngOnInit(): void {
@@ -188,6 +212,12 @@ export class DashboardComponent implements OnInit {
 
     // Generate stable virtual card number & CVV from user id
     this.generateCardDetails();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.guideService.autoStartIfFirstTime();
+    }, 1000);
   }
 
   /** Flip the virtual card to show/hide CVV */

@@ -1,453 +1,352 @@
-<!-- Main Dashboard Layout -->
-<main class="min-h-screen bg-[#f8faf9] pb-20">
-    <div class="max-w-[1440px] mx-auto px-6 lg:px-12 py-8 space-y-6">
-    
-        <!-- Top Header Profile & Search -->
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-4">
-            <div class="space-y-1">
-                <h1 class="text-3xl font-black text-[#191c1e] tracking-tight font-[Georgia,serif]">Relief Command Center</h1>
-                <p class="text-[#3e4941] font-semibold text-sm flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-[#005c37] animate-pulse"></span>
-                    Operational Status: <span class="uppercase tracking-wide text-xs">Responsive • Updates Live</span>
-                </p>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="hidden md:flex items-center bg-white border border-[#becabf]/40 rounded-2xl px-4 py-2.5 shadow-sm focus-within:ring-2 focus-within:ring-[#005c37] transition-all">
-                    <span class="material-symbols-outlined text-[#3e4941] text-xl">search</span>
-                    <input type="text" placeholder="Search incidents..." class="bg-transparent border-none outline-none px-3 text-sm font-medium w-64 placeholder:text-slate-400">
-                </div>
-                <button class="w-12 h-12 rounded-xl bg-white border border-[#becabf]/40 flex items-center justify-center text-[#191c1e] hover:shadow-md transition-all relative">
-                    <span class="material-symbols-outlined text-2xl">notifications</span>
-                    <span class="absolute top-3 right-3 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-white"></span>
-                </button>
-                <div class="flex items-center gap-3 bg-[#005c37] text-white p-1.5 rounded-xl shadow-lg shadow-[#005c37]/10 pr-4">
-                    <div class="w-9 h-9 rounded-lg bg-[#007749] flex items-center justify-center font-bold text-sm">AD</div>
-                    <div class="hidden sm:block">
-                        <p class="text-[10px] font-black uppercase tracking-wider opacity-75 leading-none">Administrator</p>
-                        <p class="text-xs font-bold leading-tight">J. Thompson</p>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-
-
-        <!-- Quick Alerts & Emergency Post -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 bg-[#f4f7f5] rounded-[2rem] p-8 text-[#191c1e] space-y-6 shadow-sm border border-[#becabf]/30">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-black font-[Georgia,serif] tracking-tight">Post Emergency Alert</h3>
-                    <span class="material-symbols-outlined text-[#005c37] text-2xl font-bold">campaign</span>
-                </div>
-                
-                <form [formGroup]="updateForm" (ngSubmit)="onSubmit()" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="text-xs font-black uppercase tracking-widest text-[#3e4941] pl-1">Alert Title</label>
-                            <input class="w-full bg-white border border-[#becabf]/40 rounded-2xl p-4 text-base font-medium focus:ring-2 focus:ring-[#005c37] outline-none transition-all placeholder:text-slate-400" placeholder="e.g., Flash Flood Warning" type="text" formControlName="title">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-xs font-black uppercase tracking-widest text-[#3e4941] pl-1">Source Agency</label>
-                            <input class="w-full bg-white border border-[#becabf]/40 rounded-2xl p-4 text-base font-medium focus:ring-2 focus:ring-[#005c37] outline-none transition-all placeholder:text-slate-400" placeholder="ODPEM / Met Service" type="text" formControlName="source">
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-xs font-black uppercase tracking-widest text-[#3e4941] pl-1">Priority Level</label>
-                        <select class="w-full bg-white border border-[#becabf]/40 rounded-2xl p-4 text-base font-medium focus:ring-2 focus:ring-[#005c37] outline-none appearance-none transition-all text-[#191c1e]" formControlName="status">
-                            <option value="info">Information (Blue Advisory)</option>
-                            <option value="warning">Warning (Orange Alert)</option>
-                            <option value="danger">Danger (Extreme Priority)</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-xs font-black uppercase tracking-widest text-[#3e4941] pl-1">Alert Content</label>
-                        <textarea class="bg-white border border-[#becabf]/40 rounded-2xl p-4 text-base font-medium w-full h-32 focus:ring-2 focus:ring-[#005c37] outline-none transition-all resize-none placeholder:text-slate-400" placeholder="Detailed situational awareness..." formControlName="content"></textarea>
-                    </div>
-
-                    <div class="flex justify-start">
-                        <button class="bg-[#005c37] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-[#005c37]/20 hover:bg-[#004d2e] hover:-translate-y-1 transition-all active:scale-95">
-                            Post Official Broadcast
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="bg-white p-8 rounded-[2rem] border border-[#becabf]/30 shadow-sm space-y-6">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-[#191c1e] tracking-tight font-[Georgia,serif]">Active Broadcasts</h3>
-                    <span class="text-xs font-black text-blue-600 uppercase tracking-widest animate-pulse">Live</span>
-                </div>
-                <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                    <ng-container *ngFor="let update of recentUpdates">
-                        <div class="p-4 rounded-2xl border border-[#becabf]/15 bg-[#f8faf9] flex items-start gap-4 group hover:border-[#005c37]/40 transition-all shadow-sm">
-                            <div class="mt-1" [ngClass]="{'text-[#ba1a1a]': update.status === 'danger', 'text-[#7c5800]': update.status === 'warning', 'text-blue-500': update.status === 'info'}">
-                                <span class="material-symbols-outlined text-xl">radio_button_checked</span>
-                            </div>
-                            <div class="flex-grow min-w-0">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-black uppercase tracking-wider" [ngClass]="{'text-[#ba1a1a]': update.status === 'danger', 'text-[#7c5800]': update.status === 'warning', 'text-blue-500': update.status === 'info'}">{{ update.status }}</span>
-                                    <button (click)="openEditModal(update)" class="text-[#005c37] hover:bg-[#005c37]/10 p-2.5 rounded-xl transition-all">
-                                        <span class="material-symbols-outlined text-lg">edit_square</span>
-                                    </button>
-                                </div>
-                                <p class="text-sm font-bold text-[#191c1e] leading-snug mt-0.5">{{ update.title }}</p>
-                                <p class="text-[10px] text-[#3e4941] mt-1 font-semibold uppercase tracking-tight">Updated {{ update.time }}</p>
-                            </div>
-                        </div>
-                    </ng-container>
-                </div>
-            </div>
-        </section>
-
-        <!-- Unified Data Grid -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            
-            <!-- Left: Pantry Inventory -->
-            <div class="bg-white p-8 rounded-[2rem] border border-[#becabf]/30 shadow-sm space-y-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-[#005c37] text-2xl">inventory_2</span>
-                        <h2 class="text-xl font-bold text-[#191c1e] tracking-tight font-[Georgia,serif]">Pantry Inventory</h2>
-                    </div>
-                    <button class="text-xs font-black uppercase tracking-widest text-[#005c37] hover:underline">Manage Stock</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-xs font-black uppercase tracking-wider text-[#3e4941] border-b-2 border-[#becabf]/20">
-                                <th class="py-4 px-2">Item Name</th>
-                                <th class="py-4 text-center">Remaining</th>
-                                <th class="py-4 text-center">Stock Status</th>
-                                <th class="py-4 text-right">Activity</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm font-medium text-[#191c1e]">
-                            <!-- LIQUIDS -->
-                            <tr class="bg-[#f4f7f5]"><td colspan="4" class="px-4 py-2 text-xs font-black uppercase tracking-widest text-[#005c37]">Liquids / Water</td></tr>
-                            <tr class="border-b border-[#becabf]/15 group hover:bg-[#f8faf9] transition-colors">
-                                <td class="py-4 px-4 flex items-center gap-2"><span class="material-symbols-outlined text-slate-400 text-lg">opacity</span> Cooking Oil</td>
-                                <td class="py-4 text-center font-bold">140 gal</td>
-                                <td class="py-4 text-center"><span class="bg-[#96f6bd] text-[#005231] px-3 py-1 rounded-full text-[10px] font-black uppercase">Healthy</span></td>
-                                <td class="py-4 text-right text-xs text-[#3e4941] font-semibold">4h ago</td>
-                            </tr>
-                        <tr class="border-b border-[#becabf]/15 group hover:bg-[#f8faf9] transition-colors">
-                            <td class="py-4 px-4 flex items-center gap-2"><span class="material-symbols-outlined text-slate-400 text-lg">water_drop</span> Bottled Water</td>
-                            <td class="py-4 text-center font-bold">1,250 cs</td>
-                            <td class="py-4 text-center"><span class="bg-[#96f6bd] text-[#005231] px-3 py-1 rounded-full text-[10px] font-black uppercase">Healthy</span></td>
-                            <td class="py-4 text-right text-xs text-[#3e4941] font-semibold">2h ago</td>
-                        </tr>
-
-                        <!-- CANNED GOODS -->
-                        <tr class="bg-[#f4f7f5]"><td colspan="4" class="px-4 py-2 text-xs font-black uppercase tracking-widest text-[#005c37]">Canned Goods / Proteins</td></tr>
-                        <tr class="border-b border-[#becabf]/15 group hover:bg-[#f8faf9] transition-colors">
-                            <td class="py-4 px-4 flex items-center gap-2 font-medium text-[#191c1e]"><span class="material-symbols-outlined text-slate-400 text-lg">inventory</span> Sardine/Mackerel</td>
-                            <td class="py-4 text-center font-bold text-[#191c1e]">840 cs</td>
-                            <td class="py-4 text-center"><span class="bg-[#96f6bd] text-[#005231] px-3 py-1 rounded-full text-[10px] font-black uppercase">Healthy</span></td>
-                            <td class="py-4 text-right text-xs text-[#3e4941] font-semibold">12h ago</td>
-                        </tr>
-                        <tr class="border-b border-[#becabf]/15 group hover:bg-[#f8faf9] transition-colors">
-                            <td class="py-4 px-4 flex items-center gap-2 font-medium text-[#191c1e]"><span class="material-symbols-outlined text-slate-400 text-lg">set_meal</span> Corned Beef/Spam</td>
-                            <td class="py-4 text-center font-bold text-[#191c1e]">620 cs</td>
-                            <td class="py-4 text-center"><span class="bg-[#96f6bd] text-[#005231] px-3 py-1 rounded-full text-[10px] font-black uppercase">Healthy</span></td>
-                            <td class="py-4 text-right text-xs text-[#3e4941] font-semibold">8h ago</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<!-- Admin Dashboard Title -->
+<header class="w-full bg-[#005c37] py-8 text-white flex justify-center">
+    <div class="max-w-7xl w-full px-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-black font-headline tracking-tight uppercase">Strategic Command Center</h1>
+            <p class="text-xs font-bold opacity-75 uppercase tracking-[0.2em] mt-1">JA RELIEF Relief Operations</p>
         </div>
+        <div class="flex items-center gap-4">
+            <span class="bg-[#ffbb16] text-[#005c37] px-3 py-1 rounded-full text-[10px] font-black uppercase">Live System Active</span>
+        </div>
+    </div>
+</header>
 
-        <!-- Right: Donations & Requests Stack -->
-        <div class="space-y-8">
-            <!-- Monetary Donations -->
-            <div class="bg-white p-8 rounded-[2rem] border border-[#becabf]/30 shadow-sm space-y-6">
-                <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-[#7c5800] text-2xl">payments</span>
-                    <h2 class="text-xl font-bold text-[#191c1e] tracking-tight font-[Georgia,serif]">Monetary Tracking</h2>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-4xl font-black text-[#191c1e] font-[Georgia,serif]">$12.4M <span class="text-base font-bold text-[#3e4941] italic tracking-normal">JMD</span></h3>
-                    <div class="flex items-end gap-2 h-20 mt-6">
-                        <div class="flex-grow bg-[#005c37]/10 rounded-t-lg h-1/2"></div>
-                        <div class="flex-grow bg-[#005c37]/20 rounded-t-lg h-3/4"></div>
-                        <div class="flex-grow bg-[#ffae00] rounded-t-lg h-full"></div>
-                        <div class="flex-grow bg-[#005c37]/10 rounded-t-lg h-1/3"></div>
+<div class="flex min-h-[calc(100vh-16rem)] flex-col">
+    <!-- Main Content -->
+    <main class="flex-grow p-8 bg-[#f8f9fb] overflow-x-hidden w-full">
+        <div class="max-w-7xl mx-auto space-y-8">
+            
+            <!-- Hero Dashboard Metrics -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-[#becabf]/15 flex flex-col justify-between h-48">
+                    <span class="text-[#3e4941] font-medium tracking-tight">Active Weather Warnings</span>
+                    <div class="flex items-end justify-between">
+                        <span class="text-5xl font-black text-[#005c37]">04</span>
+                        <span class="material-symbols-outlined text-4xl text-[#7c5800]">thunderstorm</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Donation In Kind -->
-            <div class="bg-white p-8 rounded-[2rem] border border-[#becabf]/30 shadow-sm space-y-6">
-                <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-[#7c5800] text-2xl">volunteer_activism</span>
-                    <h2 class="text-xl font-bold text-[#191c1e] tracking-tight font-[Georgia,serif]">Donations In Kind</h2>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-[#becabf]/15 text-[#191c1e]">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-slate-400 text-lg">chair</span>
-                            <div class="text-sm font-bold">Furniture / Housing</div>
-                        </div>
-                        <select class="text-xs font-black uppercase bg-white border border-[#becabf]/40 rounded-xl px-4 py-2 text-[#005c37] outline-none cursor-pointer tracking-wide shadow-sm">
-                            <option value="pledge">Pledge</option>
-                            <option value="received" selected>Received</option>
-                            <option value="delivery">Delivery</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-[#becabf]/15 text-[#191c1e]">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-slate-400 text-lg">checkroom</span>
-                            <div class="text-sm font-bold">Clothing / Bedding</div>
-                        </div>
-                        <select class="text-xs font-black uppercase bg-white border border-[#becabf]/40 rounded-xl px-4 py-2 text-[#005c37] outline-none cursor-pointer tracking-wide shadow-sm">
-                            <option value="pledge">Pledge</option>
-                            <option value="received">Received</option>
-                            <option value="delivery" selected>Delivery</option>
-                        </select>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-[#becabf]/15 flex flex-col justify-between h-48">
+                    <span class="text-[#3e4941] font-medium tracking-tight">Total Survivor Requests</span>
+                    <div class="flex items-end justify-between">
+                        <span class="text-5xl font-black text-[#005c37]">{{ allRequests.length }}</span>
+                        <span class="material-symbols-outlined text-4xl text-[#005c37]">record_voice_over</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Recent Survivor Requests -->
-            <div class="bg-white p-8 rounded-[2rem] border border-[#becabf]/30 shadow-sm space-y-6">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-[#191c1e] tracking-tight font-[Georgia,serif]">Recent Field Requests</h3>
-                    <button class="bg-slate-50 text-[#005c37] px-5 py-2.5 rounded-xl text-xs font-black border border-[#becabf]/20 hover:bg-white transition-all uppercase tracking-widest">Global Map</button>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-[#becabf]/15 flex flex-col justify-between h-48">
+                    <span class="text-[#3e4941] font-medium tracking-tight">Active Personnel</span>
+                    <div class="flex items-end justify-between">
+                        <span class="text-5xl font-black text-[#005c37]">842</span>
+                        <span class="material-symbols-outlined text-4xl text-[#7c5800]">group</span>
+                    </div>
                 </div>
-                <div class="divide-y divide-[#becabf]/15">
-                    <div *ngFor="let req of allRequests" class="py-5 flex items-center justify-between">
-                        <div class="flex items-center gap-4 min-w-0 text-[#191c1e]">
-                            <div class="w-12 h-12 shrink-0 rounded-2xl bg-slate-50 flex items-center justify-center text-[#ba1a1a] border border-[#becabf]/15">
-                                <span class="material-symbols-outlined text-2xl">person</span>
+            </section>
+
+            <!-- Donation Metrics -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-[#becabf]/15 flex flex-col justify-between h-48">
+                    <div class="flex flex-col">
+                        <span class="text-[#3e4941] font-medium tracking-tight">Monetary Donation</span>
+                        <p class="text-[10px] text-[#005c37] font-bold uppercase tracking-widest mt-1">Live Balance Tracking</p>
+                    </div>
+                    <div class="flex items-end justify-between">
+                        <span class="text-4xl font-black text-[#005c37]">${{ stats.monetary.total | number:'1.0-0' }} <small class="text-xs uppercase">JMD</small></span>
+                        <span class="material-symbols-outlined text-4xl text-[#7c5800]">payments</span>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-[#becabf]/15 flex flex-col justify-between h-48">
+                    <div class="flex flex-col">
+                        <span class="text-[#3e4941] font-medium tracking-tight">Donation In Kind</span>
+                        <p class="text-[10px] text-[#005c37] font-bold uppercase tracking-widest mt-1">Active Pledges & Supplies</p>
+                    </div>
+                    <div class="flex items-end justify-between">
+                        <span class="text-5xl font-black text-[#005c37]">{{ stats.pledges.length }}</span>
+                        <span class="material-symbols-outlined text-4xl text-[#005c37]">inventory_2</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alerts Management Section -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <!-- New Alert Form -->
+                <div class="lg:col-span-2 bg-white p-8 rounded-3xl border border-[#becabf]/15 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-2xl font-extrabold text-[#005c37] tracking-tight">Broadcast Emergency Update</h2>
+                        <span class="material-symbols-outlined text-[#007749]">campaign</span>
+                    </div>
+                    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-widest text-[#3e4941]">Alert Title</label>
+                                <input formControlName="title" class="w-full bg-[#f2f4f6] border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#005c37] transition-all text-[#191c1e]" placeholder="e.g., Flash Flood Warning - Parish of St. Mary" type="text"/>
                             </div>
-                            <div class="min-w-0">
-                                <p class="text-base font-black truncate">{{ req.requesterName }}</p>
-                                <p class="text-xs text-[#3e4941] truncate font-medium">{{ req.location }}</p>
-                                <div class="flex gap-2 flex-wrap mt-2">
-                                    <span *ngFor="let item of req.items" class="text-[10px] font-black uppercase bg-slate-50 text-[#3e4941] px-3 py-1 rounded-lg border border-[#becabf]/25">{{ item.name }} ({{ item.quantity }})</span>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-widest text-[#3e4941]">Source</label>
+                                <input formControlName="source" class="w-full bg-[#f2f4f6] border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#005c37] transition-all text-[#191c1e]" placeholder="ODPEM" type="text"/>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-[#3e4941]">Alert Level</label>
+                            <select formControlName="status" class="w-full bg-[#f2f4f6] border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#005c37] appearance-none transition-all text-[#191c1e]">
+                                <option value="info">Information-Blue (Advisory)</option>
+                                <option value="warning">Warning-Yellow (Watch)</option>
+                                <option value="danger">Danger-Red (Immediate Action)</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-[#3e4941]">Content</label>
+                            <textarea formControlName="content" class="w-full bg-[#f2f4f6] border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#005c37] transition-all text-[#191c1e]" placeholder="Describe the situation and required actions..." rows="4"></textarea>
+                        </div>
+                        <button class="w-full md:w-auto px-12 py-4 bg-[#005c37] text-white font-bold rounded-xl shadow-lg hover:bg-[#007749] transition-all active:scale-95" type="submit">
+                            Post Update
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Edit Existing Alerts -->
+                <div class="bg-[#f2f4f6] p-8 rounded-3xl space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-[#005c37] tracking-tight">Existing Alerts</h2>
+                    </div>
+                    <div class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                        <div *ngFor="let update of updates" class="p-4 bg-white rounded-2xl border border-[#becabf]/10 flex justify-between items-start group">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full" [ngClass]="{'bg-error': update.status === 'danger', 'bg-[#ffbb16]': update.status === 'warning', 'bg-blue-500': update.status === 'info'}"></span>
+                                    <span class="text-xs font-bold uppercase" [ngClass]="{'text-error': update.status === 'danger', 'text-secondary': update.status === 'warning', 'text-blue-500': update.status === 'info'}">{{ update.status }}</span>
+                                </div>
+                                <p class="text-sm font-bold text-[#191c1e] leading-tight">{{ update.title }}</p>
+                                <p class="text-[10px] text-[#3e4941]">{{ update.time }}</p>
+                            </div>
+                            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button (click)="openEditModal(update)" class="text-[#005c37] hover:bg-[#005c37]/5 p-1.5 rounded-lg">
+                                    <span class="material-symbols-outlined text-lg">edit_square</span>
+                                </button>
+                                <button (click)="deleteUpdate(update.id)" class="text-error hover:bg-error/5 p-1.5 rounded-lg">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone Reports (Danzone) -->
+                    <div class="pt-8 border-t border-[#becabf]/20">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-xl font-bold text-[#005c37] tracking-tight">Danger Zone Reports</h2>
+                            <span class="bg-error-container text-error px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ hazardReports.length }} New</span>
+                        </div>
+                        <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                            <div *ngFor="let report of hazardReports" class="p-4 bg-white rounded-2xl border border-[#becabf]/15 shadow-sm space-y-3 group">
+                                <div class="flex justify-between items-start">
+                                    <div class="space-y-1">
+                                        <p class="text-sm font-bold text-[#191c1e]">{{ report.description }}</p>
+                                        <div class="flex items-center gap-2 text-[10px] text-[#3e4941] uppercase tracking-widest font-bold">
+                                            <span class="material-symbols-outlined text-xs">location_on</span>
+                                            {{ report.location }}
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest translate-y-[-2px]" 
+                                          [ngClass]="{'bg-[#96f6bd] text-[#005231]': report.status === 'Verified', 'bg-[#ffdea6] text-[#7c5800]': report.status === 'Under Review', 'bg-error-container text-error': report.status === 'Reported'}">
+                                        {{ report.status }}
+                                    </span>
+                                </div>
+                                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                    <button (click)="updateHazardStatus(report.id!, 'Verified')" class="flex-1 py-1.5 bg-[#005c37] text-white text-[10px] font-black rounded-lg uppercase tracking-widest hover:bg-[#007749] transition-all">Verify</button>
+                                    <button (click)="updateHazardStatus(report.id!, 'Under Review')" class="flex-1 py-1.5 bg-[#ffbb16] text-[#005c37] text-[10px] font-black rounded-lg uppercase tracking-widest hover:bg-[#ffdea6] transition-all">Under Review</button>
                                 </div>
                             </div>
+                            <div *ngIf="hazardReports.length === 0" class="text-center py-6 text-[#3e4941] text-xs italic">
+                                No active hazard reports.
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-2 items-end shrink-0">
-                            <button *ngFor="let item of req.items" (click)="item.status === 'pending' ? markAsReceived(req, item) : null" 
-                                    class="px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all tracking-wide" 
-                                    [ngClass]="{'bg-[#ffdad6] text-[#ba1a1a] cursor-pointer hover:bg-red-200': item.status === 'pending', 'bg-[#96f6bd] text-[#005231] cursor-default border border-[#005231]/15': item.status !== 'pending'}">
-                                {{ item.status === 'pending' ? 'Ack ' + item.name : 'Acknowledged' }}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pantry & Donations Sections -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Recent In-Kind Pledges -->
+                <div id="inkind-section" class="bg-white p-8 rounded-3xl border border-[#becabf]/15 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[#005c37]">inventory_2</span>
+                            <h2 class="text-xl font-bold text-[#191c1e] tracking-tight">Recent In-Kind Pledges</h2>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="text-xs font-bold uppercase tracking-widest text-[#3e4941] border-b border-[#becabf]/10">
+                                    <th class="py-4">Donor</th>
+                                    <th class="py-4">Items</th>
+                                    <th class="py-4 text-center">Center</th>
+                                    <th class="py-4 text-right">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm font-medium">
+                                <tr *ngFor="let pledge of stats.pledges" class="border-b border-[#becabf]/5">
+                                    <td class="py-4">
+                                        <div class="font-bold text-[#191c1e]">{{ pledge.donorName }}</div>
+                                        <div class="text-[10px] text-[#3e4941]">{{ pledge.donorPhone }}</div>
+                                    </td>
+                                    <td class="py-4 text-xs">{{ pledge.items }}</td>
+                                    <td class="py-4 text-center">
+                                        <span class="bg-[#96f6bd] text-[#005231] px-3 py-1 rounded-full text-[10px] font-black uppercase">{{ pledge.center }}</span>
+                                    </td>
+                                    <td class="py-4 text-right text-xs text-[#3e4941]">{{ pledge.createdAt | date:'shortTime' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Monetary Donations -->
+                <div id="monetary-section" class="bg-white p-8 rounded-3xl border border-[#becabf]/15 shadow-sm space-y-6 flex flex-col">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[#7c5800]">payments</span>
+                            <h2 class="text-xl font-bold text-[#191c1e] tracking-tight">Monetary Donations</h2>
+                        </div>
+                        <span class="text-xs font-bold text-[#007749] px-2 py-1 bg-[#005c37]/5 rounded-lg">+14% vs Last Month</span>
+                    </div>
+                    <div class="flex-grow flex flex-col justify-center">
+                        <p class="text-xs font-bold uppercase tracking-widest text-[#3e4941] mb-1">Total Contributions</p>
+                        <h3 class="text-4xl font-black text-[#191c1e]">${{ stats.monetary.total | number:'1.0-0' }} <span class="text-lg font-bold text-[#3e4941]">JMD</span></h3>
+                        <div class="mt-8 flex items-end gap-2 h-24">
+                            <div class="flex-grow bg-[#005c37]/10 rounded-t-lg h-1/2 group relative"></div>
+                            <div class="flex-grow bg-[#005c37]/20 rounded-t-lg h-3/4 group relative"></div>
+                            <div class="flex-grow bg-[#005c37]/10 rounded-t-lg h-2/3 group relative"></div>
+                            <div class="flex-grow bg-[#ffbb16] rounded-t-lg h-full group relative">
+                                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#7c5800]">Today</div>
+                            </div>
+                            <div class="flex-grow bg-[#005c37]/10 rounded-t-lg h-1/3 group relative"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather Control & Survivor Requests -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Weather Control -->
+                <div class="bg-[#005c37] rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
+                    <div class="relative z-10 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-2xl font-extrabold tracking-tight">Weather Control</h3>
+                            <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter">Live Monitor</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="material-symbols-outlined text-6xl text-[#ffbb16]">cloud_sync</span>
+                            <div>
+                                <p class="text-3xl font-black">28°C</p>
+                                <p class="text-sm text-white/80">Partly Cloudy • Wind 12km/h SE</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button (click)="setWeather('rainy')" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl flex flex-col items-center gap-1 transition-all">
+                                <span class="material-symbols-outlined">rainy</span>
+                                <span class="text-[10px] font-bold uppercase">Precip</span>
+                            </button>
+                            <button (click)="setWeather('sunny')" class="bg-[#ffbb16] text-[#005c37] p-3 rounded-xl flex flex-col items-center gap-1 transition-all">
+                                <span class="material-symbols-outlined">air</span>
+                                <span class="text-[10px] font-bold uppercase">Wind</span>
+                            </button>
+                            <button (click)="setWeather('stormy')" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl flex flex-col items-center gap-1 transition-all">
+                                <span class="material-symbols-outlined">water_drop</span>
+                                <span class="text-[10px] font-bold uppercase">Humid</span>
+                            </button>
+                            <button class="bg-white/10 hover:bg-white/20 p-3 rounded-xl flex flex-col items-center gap-1 transition-all">
+                                <span class="material-symbols-outlined">visibility</span>
+                                <span class="text-[10px] font-bold uppercase">Visib</span>
                             </button>
                         </div>
                     </div>
+                    <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#007749] rounded-full blur-3xl opacity-50"></div>
                 </div>
-            </div>
 
-            <!-- Recent Hazard Reports -->
-            <div class="bg-white p-8 rounded-[2rem] border border-[#becabf]/30 shadow-sm space-y-6 mt-8">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-red-600 text-2xl">report_problem</span>
-                        <h3 class="text-xl font-bold text-[#191c1e] tracking-tight font-[Georgia,serif]">Hazard & Danger Zone Reports</h3>
+                <!-- Recent Survivor Requests -->
+                <div class="bg-white p-8 rounded-3xl border border-[#becabf]/15 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold text-[#191c1e] tracking-tight">Recent Survivor Requests</h3>
+                        <button routerLink="/donate" class="bg-[#f2f4f6] text-[#005c37] px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#005c37]/5 transition-colors">View Map</button>
                     </div>
-                </div>
-                <div class="divide-y divide-[#becabf]/15 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                    <div *ngFor="let report of hazardReports" class="py-6 space-y-4">
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="flex items-start gap-4 min-w-0">
-                                <div class="w-12 h-12 shrink-0 rounded-2xl bg-red-50 flex items-center justify-center text-red-600 border border-red-100">
-                                    <span class="material-symbols-outlined text-2xl">warning</span>
+                    <div class="divide-y divide-[#becabf]/10">
+                        <div *ngFor="let request of allRequests.slice(0, 3)" class="py-4 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-[#ffdad6] flex items-center justify-center text-[#ba1a1a]">
+                                    <span class="material-symbols-outlined">emergency</span>
                                 </div>
-                                <div class="min-w-0">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="text-xs font-black uppercase tracking-widest text-red-600 font-[Lexend,sans-serif]">{{ report.dangerType }}</span>
-                                        <span class="text-[10px] text-[#3e4941] font-bold opacity-60">• {{ report.createdAt | date:'short' }}</span>
-                                    </div>
-                                    <p class="text-base font-black text-[#191c1e] truncate">{{ report.location }}</p>
-                                    <p class="text-sm text-[#3e4941] font-medium leading-relaxed mt-2 italic px-4 py-2 bg-slate-50 border-l-4 border-red-200">"{{ report.description }}"</p>
-                                    <p class="text-[10px] font-black uppercase tracking-tighter text-slate-400 mt-2">Reported by: {{ report.reporterName }}</p>
-                                    
-                                    <div class="flex gap-3 mt-4" *ngIf="report.mediaLink || report.mediaPath">
-                                        <a *ngIf="report.mediaLink" [href]="report.mediaLink" target="_blank" class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-600 hover:outline rounded-lg px-2 py-1 outline-1">
-                                            <span class="material-symbols-outlined text-sm">link</span> External Media
-                                        </a>
-                                        <span *ngIf="report.mediaPath" class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#005c37] bg-green-50 px-2 py-1 rounded-lg">
-                                            <span class="material-symbols-outlined text-sm">image</span> Photos Attached
-                                        </span>
-                                    </div>
+                                <div>
+                                    <p class="text-sm font-bold text-[#191c1e]">{{ request.requesterName }}</p>
+                                    <p class="text-xs text-[#3e4941]">{{ request.location }} • {{ request.timestamp | date:'shortTime' }}</p>
                                 </div>
                             </div>
-                            
-                            <div class="flex flex-col gap-2 shrink-0">
-                                <button *ngIf="report.status === 'Pending'" (click)="updateHazardStatus(report.id!, 'Approved')" 
-                                    class="bg-[#96f6bd] text-[#005231] px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#005c37] hover:text-white transition-all shadow-sm">
-                                    Verify Report
-                                </button>
-                                <button *ngIf="report.status !== 'Resolved'" (click)="updateHazardStatus(report.id!, 'Resolved')" 
-                                    class="border border-[#becabf]/30 text-[#3e4941] px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">
-                                    Resolve
-                                </button>
-                            </div>
+                            <span class="bg-[#ffdad6] text-[#ba1a1a] px-3 py-1 rounded-full text-[10px] font-black uppercase">Urgent</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Expanded Weather Control -->
-    <section class="grid grid-cols-1 gap-8">
-        <div class="bg-[#005c37] rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl">
-            <div class="relative z-10 space-y-10">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-5">
-                        <span class="material-symbols-outlined text-5xl text-[#ffbb16]">cloud_sync</span>
-                        <div>
-                            <h3 class="text-3xl font-extrabold tracking-tight font-[Georgia,serif]">Weather Command Center</h3>
-                            <p class="text-white/80 text-base">Broadcast atmospheric updates across recovery sectors</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="text-right">
-                            <p class="text-4xl font-black font-[Georgia,serif]">28°C</p>
-                            <p class="text-xs font-black uppercase tracking-widest text-[#ffbb16]">St. Andrew, Jamaica</p>
-                        </div>
+            <!-- Map Overlay -->
+            <section class="h-[400px] rounded-3xl overflow-hidden shadow-sm relative border border-[#becabf]/15">
+                <img alt="Strategic map" class="w-full h-full object-cover grayscale opacity-80" src="assets/images/jamaica-map-node.png"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#005c37]/20 to-transparent"></div>
+                <div class="absolute top-6 left-6 glass-effect p-4 rounded-2xl shadow-xl border border-white/20">
+                    <p class="text-xs font-bold text-[#005c37] uppercase tracking-widest mb-2">Live Incident Map</p>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 bg-error rounded-full animate-pulse"></span>
+                        <span class="text-sm font-bold text-[#191c1e]">{{ allRequests.length }} Active Relief Sectors</span>
                     </div>
                 </div>
+            </section>
+        </div>
+    </main>
+</div>
 
-                <!-- Interactive Condition Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-                    <button (click)="setWeather('sunny')" [ngClass]="currentWeather === 'sunny' ? 'bg-[#ffbb16] text-[#005c37] border-white shadow-xl scale-105' : 'bg-white/10 hover:bg-white/20 border-white/10 text-white'" class="p-4 rounded-[2rem] flex flex-col items-center gap-3 transition-all border group">
-                        <span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">sunny</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Sunny</span>
-                    </button>
-                    <button (click)="setWeather('cloudy')" [ngClass]="currentWeather === 'cloudy' ? 'bg-[#ffbb16] text-[#005c37] border-white shadow-xl scale-105' : 'bg-white/10 hover:bg-white/20 border-white/10 text-white'" class="p-4 rounded-[2rem] flex flex-col items-center gap-3 transition-all border group">
-                        <span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">cloud</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Cloudy</span>
-                    </button>
-                    <button (click)="setWeather('windy')" [ngClass]="currentWeather === 'windy' ? 'bg-[#ffbb16] text-[#005c37] border-white shadow-xl scale-105' : 'bg-white/10 hover:bg-white/20 border-white/10 text-white'" class="p-4 rounded-[2rem] flex flex-col items-center gap-3 transition-all border group">
-                        <span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">air</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Windy</span>
-                    </button>
-                    <button (click)="setWeather('rainy_heavy')" [ngClass]="currentWeather === 'rainy_heavy' ? 'bg-[#ffbb16] text-[#005c37] border-white shadow-xl scale-105' : 'bg-white/10 hover:bg-white/20 border-white/10 text-white'" class="p-4 rounded-[2rem] flex flex-col items-center gap-3 transition-all border group">
-                        <span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">rainy_heavy</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Heavy Rain</span>
-                    </button>
-                    <button (click)="setWeather('thunderstorm')" [ngClass]="currentWeather === 'thunderstorm' ? 'bg-[#ffbb16] text-[#005c37] border-white shadow-xl scale-105' : 'bg-white/10 hover:bg-white/20 border-white/10 text-white'" class="p-4 rounded-[2rem] flex flex-col items-center gap-3 transition-all border group">
-                        <span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">thunderstorm</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Thunder</span>
-                    </button>
-                    <button (click)="setWeather('lightning')" [ngClass]="currentWeather === 'lightning' ? 'bg-[#ffbb16] text-[#005c37] border-white shadow-xl scale-105' : 'bg-white/10 hover:bg-white/20 border-white/10 text-white'" class="p-4 rounded-[2rem] flex flex-col items-center gap-3 transition-all border group">
-                        <span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">flash_on</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Lightning</span>
-                    </button>
-                    <button (click)="setWeather('flood')" [ngClass]="currentWeather === 'flood' ? 'bg-[#ffbb16] text-[#005c37] border-white shadow-xl scale-105' : 'bg-white/10 hover:bg-white/20 border-white/10 text-white'" class="p-4 rounded-[2rem] flex flex-col items-center gap-3 transition-all border group">
-                        <span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">flood</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Flooding</span>
-                    </button>
-                    <button (click)="setWeather('landslide')" [ngClass]="currentWeather === 'landslide' ? 'bg-[#ffbb16] text-[#005c37] border-white shadow-xl scale-105' : 'bg-white/10 hover:bg-white/20 border-white/10 text-white'" class="p-4 rounded-[2rem] flex flex-col items-center gap-3 transition-all border group">
-                        <span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">landscape</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Landslide</span>
-                    </button>
+<!-- Edit Alert Modal -->
+<div *ngIf="isEditModalOpen" class="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/20 animate-in fade-in zoom-in duration-200">
+        <div class="bg-[#005c37] p-8 text-white relative">
+            <h3 class="text-2xl font-black font-[Georgia,serif]">Edit Emergency Update</h3>
+            <p class="text-xs font-bold opacity-75 uppercase tracking-widest mt-1">Refining operational guidance</p>
+            <button (click)="closeEditModal()" class="absolute top-8 right-8 text-white/50 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        
+        <form [formGroup]="editForm" (ngSubmit)="onUpdateSave()" class="p-8 space-y-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-[#005c37]">Broadcast Title</label>
+                <input formControlName="title" type="text" class="w-full border-none bg-[#f4f7f5] rounded-2xl px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#005c37] transition-all">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-[#005c37]">Source Org</label>
+                    <input formControlName="source" type="text" class="w-full border-none bg-[#f4f7f5] rounded-2xl px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#005c37] transition-all text-[#3e4941]">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-[#005c37]">Alert Level</label>
+                    <select formControlName="status" class="w-full border-none bg-[#f4f7f5] rounded-2xl px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-[#005c37] transition-all appearance-none cursor-pointer">
+                        <option value="info">Advisory</option>
+                        <option value="warning">Warning</option>
+                        <option value="danger">Danger</option>
+                    </select>
                 </div>
             </div>
-            <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-[#007749] rounded-full blur-[120px] opacity-25"></div>
-        </div>
-    </section>
 
-    <!-- Map Overlay -->
-    <section class="h-80 rounded-[2.5rem] overflow-hidden shadow-sm relative border border-[#becabf]/40 bg-white">
-        <img alt="Map" class="w-full h-full object-cover grayscale opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHVeY0v-xMR05qTZjEx6Nya0IiuunHVdIqcc_bwybak0cU4FfnRegue00XEYuziCzqkTE089QKL5zIFHRgRTPbof3sHf7bJUJoaPX_-YgPqBG7m-0J7uQf14fRGwh0wFJpN_-QQFU7V09v_XwU4o3Vo0R2ZLmKu_jeYgx9Wwb2Xrw9R-ax_GH97I9_uQumR1G8Gj9A8OzS3PrDODnoEaId-2JaSWiRy8_AssPRHfdIruJcU0-I-1-bLa6dFktGzc_o1awi0spQzVc"/>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-        <div class="absolute top-8 left-8 bg-white/95 backdrop-blur-lg p-6 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/50">
-            <p class="text-[10px] font-black text-[#005c37] uppercase tracking-[0.2em] mb-2 font-[Georgia,serif]">Strategic Operations Map</p>
-            <div class="flex items-center gap-3">
-                <span class="w-3 h-3 bg-[#ba1a1a] rounded-full animate-pulse shadow-[0_0_10px_rgba(186,26,26,0.5)]"></span>
-                <span class="text-sm font-bold text-[#191c1e]">Active Personnel • Sector Alpha-7</span>
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-[#005c37]">Message Content</label>
+                <textarea formControlName="content" rows="4" class="w-full border-none bg-[#f4f7f5] rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-[#005c37] transition-all leading-relaxed"></textarea>
             </div>
-        </div>
-    </section>
 
+            <div class="flex gap-4 pt-2">
+                <button type="button" (click)="closeEditModal()" class="flex-1 py-4 text-sm font-black text-[#3e4941] hover:bg-[#f4f7f5] rounded-2xl transition-all uppercase tracking-widest">Cancel</button>
+                <button type="submit" class="flex-[2] py-4 bg-[#005c37] text-white text-sm font-black rounded-2xl shadow-lg shadow-[#005c37]/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest">Save Changes</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <!-- Edit Broadcast Modal -->
-    <div *ngIf="isEditModalOpen" class="fixed inset-0 z-[1000] flex items-center justify-center p-6 sm:p-12">
-        <div class="absolute inset-0 bg-[#3e4941]/40 backdrop-blur-sm" (click)="closeEditModal()"></div>
-        <div class="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-[#becabf]/30 flex flex-col max-h-[90vh] overflow-hidden transform transition-all scale-100">
-            <!-- Modal Header -->
-            <div class="p-8 border-b border-[#becabf]/20 flex items-center justify-between bg-[#f8faf9]">
-                <div class="space-y-1">
-                    <h3 class="text-2xl font-black font-[Georgia,serif] tracking-tight">Edit Operational Broadcast</h3>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-[#005c37] flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-[#005c37] animate-pulse"></span>
-                        Direct Transmission Sync Active
-                    </p>
-                </div>
-                <button (click)="closeEditModal()" class="w-10 h-10 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-center transition-all">
-                    <span class="material-symbols-outlined text-slate-400">close</span>
-                </button>
-            </div>
-
-            <!-- Modal Content -->
-            <div class="flex-grow overflow-y-auto p-8 custom-scrollbar">
-                <form [formGroup]="editForm" (ngSubmit)="onUpdateSave()" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#3e4941] pl-1">Broadcast Title</label>
-                            <input class="w-full bg-[#f8faf9] border border-[#becabf]/30 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-[#005c37] outline-none transition-all" type="text" formControlName="title">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#3e4941] pl-1">Target Source</label>
-                            <input class="w-full bg-[#f8faf9] border border-[#becabf]/30 rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-[#005c37] outline-none transition-all" type="text" formControlName="source">
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-[#3e4941] pl-1">Tactical Priority</label>
-                        <div class="grid grid-cols-3 gap-3">
-                            <label class="cursor-pointer group">
-                                <input type="radio" value="info" formControlName="status" class="hidden">
-                                <div class="p-3 rounded-2xl border text-center transition-all font-black text-[10px] uppercase tracking-widest"
-                                     [ngClass]="editForm.get('status')?.value === 'info' ? 'bg-[#96f6bd] border-[#005c37] text-[#005c37]' : 'bg-[#f8faf9] border-[#becabf]/20 text-[#3e4941] group-hover:border-[#005c37]/30'">
-                                    Information
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" value="warning" formControlName="status" class="hidden">
-                                <div class="p-3 rounded-2xl border text-center transition-all font-black text-[10px] uppercase tracking-widest"
-                                     [ngClass]="editForm.get('status')?.value === 'warning' ? 'bg-[#ffae00] border-[#7c5800] text-[#1d211e]' : 'bg-[#f8faf9] border-[#becabf]/20 text-[#3e4941] group-hover:border-[#ffae00]/40'">
-                                    Warning
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" value="danger" formControlName="status" class="hidden">
-                                <div class="p-3 rounded-2xl border text-center transition-all font-black text-[10px] uppercase tracking-widest"
-                                     [ngClass]="editForm.get('status')?.value === 'danger' ? 'bg-[#ba1a1a] border-[#ba1a1a] text-white shadow-lg shadow-[#ba1a1a]/20' : 'bg-[#f8faf9] border-[#becabf]/20 text-[#3e4941] group-hover:border-[#ba1a1a]/40'">
-                                    Critical
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-[#3e4941] pl-1">Detailed Situation Briefing</label>
-                        <textarea class="w-full bg-[#f8faf9] border border-[#becabf]/30 rounded-2xl p-4 text-sm font-medium h-32 focus:ring-2 focus:ring-[#005c37] outline-none transition-all resize-none" formControlName="content"></textarea>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-8 border-t border-[#becabf]/20 flex items-center justify-between bg-[#f8faf9]">
-                <button type="button" (click)="deleteUpdate(editingUpdate!.id)" class="px-6 py-3 rounded-xl border border-[#ba1a1a]/40 text-[#ba1a1a] text-[10px] font-black uppercase tracking-widest hover:bg-[#ba1a1a] hover:text-white transition-all shadow-sm">
-                    Retract Broadcast
-                </button>
-                <div class="flex items-center gap-4">
-                    <button type="button" (click)="closeEditModal()" class="px-6 py-3 rounded-xl border border-[#becabf]/40 text-[#3e4941] text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">
-                        Cancel
-                    </button>
-                    <button type="button" (click)="onUpdateSave()" class="bg-[#005c37] text-white px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-[#005c37]/20 hover:bg-[#004d2e] transition-all">
-                        Commit Updates
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
+<!-- Bottom Footer -->
+<div class="w-full bg-[#f8f9fb] py-8 border-t border-slate-100 flex justify-center">
+    <p class="text-xs font-bold text-[#3e4941] uppercase tracking-widest">© 2026 JA RELIEF | Strategic Command Center</p>
+</div>

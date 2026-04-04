@@ -22,7 +22,14 @@ export class ErrorInterceptor implements HttpInterceptor {
           this.authService.logout();
         }
         
-        const error = err.error?.message || err.error?.error || err.statusText;
+        let error = err.statusText;
+        if (err.error?.errors && Array.isArray(err.error.errors)) {
+          error = err.error.errors.map((e: any) => e.msg).join(', ');
+        } else if (err.error?.message) {
+          error = err.error.message;
+        } else if (err.error?.error) {
+          error = err.error.error;
+        }
         console.error('HTTP Error Interceptor:', error);
         return throwError(() => error);
       }

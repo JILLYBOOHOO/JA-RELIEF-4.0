@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { GuideService } from '../../services/guide.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private guideService: GuideService
   ) { }
 
   ngOnInit(): void {
@@ -28,10 +30,31 @@ export class LoginComponent implements OnInit {
     }
 
     this.loginForm = this.fb.group({
-      idNumber: ['', Validators.required],
-      password: ['', Validators.required]
+      identifier: ['', Validators.required],
+      password: ['', Validators.required],
+      rememberMe: [false]
     });
+
+    const savedIdentifier = localStorage.getItem('ja_relief_saved_identifier');
+    if (savedIdentifier) {
+      this.loginForm.patchValue({
+        identifier: savedIdentifier,
+        rememberMe: true
+      });
+    }
   }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.guideService.autoStartIfFirstTime();
+    }, 1000);
+  }
+
+  showForgotPasswordModal = false;
+  resetIdentifier = '';
+  resetPassword = '';
+  resetMessage = '';
+  resetError = false;
 
   toggleMode(): void {
     this.isAdminMode = !this.isAdminMode;
@@ -50,9 +73,15 @@ export class LoginComponent implements OnInit {
     this.loginError = false;
     this.errorMessage = '';
 
-    const { idNumber, password } = this.loginForm.value;
+    const { identifier, password, rememberMe } = this.loginForm.value;
 
-    this.authService.login(idNumber, password).subscribe({
+    if (rememberMe && !this.isAdminMode) {
+      localStorage.setItem('ja_relief_saved_identifier', identifier);
+    } else {
+      localStorage.removeItem('ja_relief_saved_identifier');
+    }
+
+    this.authService.login(identifier, password).subscribe({
       next: (response) => {
         this.isLoading = false;
         if (response && response.token) {
@@ -64,13 +93,45 @@ export class LoginComponent implements OnInit {
           }
         } else {
           this.loginError = true;
-          this.errorMessage = 'Invalid ID Number or Password. Please try again.';
+          this.errorMessage = 'Invalid Username/Phone or Password. Please try again.';
         }
       },
       error: (err) => {
         this.isLoading = false;
         this.loginError = true;
         this.errorMessage = err || 'An unexpected error occurred. Please try again.';
+      }
+    });
+  }
+
+  openForgotPassword(): void {
+    this.showForgotPasswordModal = true;
+    this.resetIdentifier = '';
+    this.resetPassword = '';
+    this.resetMessage = '';
+    this.resetError = false;
+  }
+
+  closeForgotPassword(): void {
+    this.showForgotPasswordModal = false;
+  }
+
+  submitForgotPassword(): void {
+    if (!this.resetIdentifier || !this.resetPassword) {
+      this.resetError = true;
+      this.resetMessage = 'Please fill out both fields.';
+      return;
+    }
+
+    this.authService.resetPassword(this.resetIdentifier, this.resetPassword).subscribe({
+      next: (res) => {
+        this.resetError = false;
+        this.resetMessage = 'Password successfully reset! You can now log in.';
+        setTimeout(() => this.closeForgotPassword(), 3000);
+      },
+      error: (err) => {
+        this.resetError = true;
+        this.resetMessage = err || 'Error resetting password. Please try again.';
       }
     });
   }

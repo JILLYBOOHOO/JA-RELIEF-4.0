@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AccessibilityService, FontSize } from '../../services/accessibility.service';
 import { SpeechService } from '../../services/speech.service';
+import { GuideService } from '../../services/guide.service';
 
 @Component({
   selector: 'app-accessibility-toolbar',
@@ -12,7 +13,8 @@ export class AccessibilityToolbarComponent implements OnInit {
 
   constructor(
     public accessibilityService: AccessibilityService,
-    public speechService: SpeechService
+    public speechService: SpeechService,
+    private guideService: GuideService
   ) {}
 
   ngOnInit() {
@@ -23,23 +25,18 @@ export class AccessibilityToolbarComponent implements OnInit {
 
   setSize(size: FontSize) {
     this.accessibilityService.setFontSize(size);
-    const label = size === 'normal' ? 'Normal' : size === 'large' ? 'Large' : 'Huge';
-    if (this.accessibilityService.isAudioEnabled) {
-      this.speechService.speak('Font size set to ' + label);
-    }
   }
 
   toggleAudio() {
-    const isEnabled = this.accessibilityService.toggleAudio();
-    if (isEnabled) {
-        this.speechService.speak('Voice guide enabled.');
-    } else {
-        this.speechService.speak('Voice guide disabled.');
-    }
+    this.accessibilityService.toggleAudio();
   }
 
 
   toggleVoice() {
     this.speechService.toggleListening();
+  }
+
+  startGuide() {
+    this.guideService.startGuideForCurrentPage();
   }
 }

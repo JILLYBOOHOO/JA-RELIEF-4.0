@@ -8,7 +8,27 @@ import { AlertService } from '../../services/alert.service';
 import { PersistenceService } from '../../services/persistence.service';
 import { SpeechService } from '../../services/speech.service';
 
-// Custom Validator for common passwords (123, abc, etc.)
+// Custom Validator for common sequences (123, abc, etc.)
+export function sequenceValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    if (!value || typeof value !== 'string') return null;
+    if (value.length < 4) return null; // Very short values are allowed if otherwise unique
+    
+    const commonSequences = ['1234', '2345', '3456', '4567', '5678', '6789', 'abcd', 'qwerty', 'password'];
+    const isCommon = commonSequences.some(seq => value.toLowerCase().includes(seq));
+    
+    // Check for repetitive chars like 111111
+    const isRepetitive = /^(.)\1+$/.test(value) || /(.)\1\1\1\1/.test(value);
+    
+    if (isCommon || isRepetitive) {
+      return { simpleSequence: true };
+    }
+    return null;
+  };
+}
+
+// Custom Validator for password complexity
 export function passwordComplexityValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
@@ -16,8 +36,6 @@ export function passwordComplexityValidator(): ValidatorFn {
     
     const commonSequences = ['123', '234', '345', '456', '567', '678', '789', 'abc', 'qwerty', 'password'];
     const isCommon = commonSequences.some(seq => value.toLowerCase().includes(seq));
-    
-    // Check for repetitive chars like 111, aaa
     const isRepetitive = /(.)\1\1/.test(value);
     
     if (isCommon || isRepetitive) {
@@ -113,9 +131,9 @@ export class RegisterComponent implements OnInit {
     // Form setup
     this.survivorForm = this.fb.group({
       fullName: ['', Validators.required],
-      contact: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{7,}$')]],
+      contact: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{7,}$'), sequenceValidator()]],
       idType: ['', Validators.required],
-      idNumber: ['', Validators.required],
+      idNumber: ['', [Validators.required, sequenceValidator()]],
       provisional: [false],
       parish: ['', Validators.required],
       address: [''],
@@ -183,6 +201,16 @@ export class RegisterComponent implements OnInit {
   }
 
 
+
+  resetForm(): void {
+    this.survivorForm.reset();
+    this.persistenceService.clearForm('register');
+    this.showSuccessModal = false;
+    this.alertService.close();
+    if (this.isVoiceEnabled) {
+      this.speechService.speak('Form has been completely cleared and reset.');
+    }
+  }
 
   showSuccessModal = false;
 
@@ -266,7 +294,7 @@ export class RegisterComponent implements OnInit {
       },
       error: (err) => {
         console.error('Registration error:', err);
-        const errorMsg = err.error?.error || err.error?.message || 'Registration failed. Please try again.';
+        const errorMsg = typeof err === 'string' ? err : (err?.error?.error || err?.error?.message || err?.message || 'Registration failed. Please try again.');
         this.alertService.error('Registration Failed', errorMsg);
       }
     });

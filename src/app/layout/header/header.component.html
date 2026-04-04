@@ -2,31 +2,29 @@
     <h1>Welcome to JA RELIEF</h1>
 
     <nav role="navigation" aria-label="Main Navigation">
-        <a routerLink="/" aria-label="Go to Home Page"><img src="assets/cirlce.ja.png" class="btn-icon" alt="" aria-hidden="true">Home</a>
-        <a routerLink="/donate" aria-label="Donate to JA Relief"><img src="assets/cirlce.ja.png" class="btn-icon"
-                alt="" aria-hidden="true">Donate</a>
+        <a routerLink="/" aria-label="Go to Home Page"><span class="material-symbols-outlined btn-icon" aria-hidden="true">home</span>Home</a>
+        <a routerLink="/donate" aria-label="Donate to JA Relief"><span class="material-symbols-outlined btn-icon" aria-hidden="true">volunteer_activism</span>Donate</a>
 
         <!-- Show Dashboard & Logout when logged in -->
-        <ng-container *ngIf="authService.currentUser$ | async; else notLoggedIn">
-            <a routerLink="/dashboard" aria-label="Go to Dashboard"><img src="assets/cirlce.ja.png" class="btn-icon"
-                    alt="" aria-hidden="true">Dashboard</a>
-            <a (click)="logout()" style="cursor: pointer;" aria-label="Logout from account"><img
-                    src="assets/cirlce.ja.png" class="btn-icon" alt="" aria-hidden="true">Logout</a>
+        <ng-container *ngIf="authService.currentUser$ | async as user; else notLoggedIn">
+            <a [routerLink]="user.role === 'admin' ? '/admin' : '/dashboard'" [attr.aria-label]="user.role === 'admin' ? 'Go to Admin Portal' : 'Go to Dashboard'">
+                <span class="material-symbols-outlined btn-icon" aria-hidden="true">dashboard</span>
+                {{ user.role === 'admin' ? 'Admin Portal' : 'Dashboard' }}
+            </a>
+            <a (click)="logout()" style="cursor: pointer;" aria-label="Logout from account"><span class="material-symbols-outlined btn-icon" aria-hidden="true">logout</span>Logout</a>
         </ng-container>
 
         <!-- Show Login when NOT logged in -->
         <ng-template #notLoggedIn>
-            <a routerLink="/login" aria-label="Login to your account"><img src="assets/cirlce.ja.png" class="btn-icon"
-                    alt="" aria-hidden="true">Login</a>
-            <a routerLink="/login" class="admin-login-link" aria-label="Admin Login"><img src="assets/cirlce.ja.png"
-                    class="btn-icon" alt="" aria-hidden="true">Admin Login</a>
+            <a routerLink="/login" aria-label="Login to your account"><span class="material-symbols-outlined btn-icon" aria-hidden="true">login</span>Login</a>
+            <a routerLink="/login" class="admin-login-link" aria-label="Admin Login"><span class="material-symbols-outlined btn-icon" aria-hidden="true">admin_panel_settings</span>Admin Login</a>
         </ng-template>
 
         <div class="toggle-group">
             <button (click)="toggleVoice()" class="theme-toggle-btn" [class.active]="isListening"
                 [attr.aria-label]="isListening ? 'Stop voice navigation' : 'Start voice navigation'"
                 [title]="isListening ? 'Stop Voice Commands' : 'Start Voice Commands'">
-                <img src="assets/cirlce.ja.png" class="btn-icon toggle-icon" alt="" aria-hidden="true">
+                <span class="material-symbols-outlined btn-icon toggle-icon" aria-hidden="true">mic</span>
                 <!-- Mic icon -->
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
@@ -38,7 +36,7 @@
 
             <button (click)="toggleDarkMode()" class="theme-toggle-btn" [attr.aria-pressed]="isDarkMode"
                 aria-label="Toggle Dark Mode" [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-                <img src="assets/cirlce.ja.png" class="btn-icon toggle-icon" alt="" aria-hidden="true">
+                <span class="material-symbols-outlined btn-icon toggle-icon" aria-hidden="true">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
                 <!-- Sun icon (light mode) -->
                 <svg *ngIf="isDarkMode" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

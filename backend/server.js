@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -9,13 +10,21 @@ require('dotenv').config();
 
 const app = express();
 
+// Enable Gzip Compression
+app.use(compression());
+
 // Security Middlewares
 app.use(helmet({
   crossOriginResourcePolicy: false, // allow images from backend to be loaded if needed
 }));
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve uploads with 7 day cache
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  maxAge: '7d',
+  immutable: true
+}));
 app.use(morgan('dev'));
 
 
@@ -39,16 +48,24 @@ app.use((req, res, next) => {
 const survivorRoutes = require('./survivorroutes/survivors');
 const paymentRoutes = require('./survivorroutes/payments');
 const hazardRoutes = require('./survivorroutes/hazards');
+const donationRoutes = require('./survivorroutes/donations');
+const adminStatsRoutes = require('./survivorroutes/admin_stats');
+const requestRoutes = require('./survivorroutes/requests');
 
 app.use('/api/survivors', survivorRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/hazards', hazardRoutes);
+app.use('/api/donations', donationRoutes);
+app.use('/api/admin', adminStatsRoutes);
+app.use('/api/requests', requestRoutes);
 
 // Serve static files from the frontend build
 app.use(express.static(path.join(__dirname, '../dist/ja-relief')));
 
 // Catch all other routes to enable Angular router navigation (e.g. /register)
 app.get(/.*/, (req, res) => {
+  // Add cache control for the initial document as well, shorter age
+  res.set('Cache-Control', 'public, max-age=300');
   res.sendFile(path.join(__dirname, '../dist/ja-relief/index.html'));
 });
 

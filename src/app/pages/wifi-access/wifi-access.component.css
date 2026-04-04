@@ -1,12 +1,62 @@
-.wifi {
-    text-align: center;
-    padding: 2rem;
+.wifi-page-wrapper {
+    background-color: #ffffff;
+    min-height: 100vh;
+    font-family: 'Manrope', sans-serif;
 }
 
-.voucher {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 1.5rem 0;
-    background: #eee;
-    padding: 1rem;
+.font-headline {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.hero-pattern {
+    background-image: url('/assets/images/starlink-wooden-hero.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.text-shadow-strong {
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 1), 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.text-jamaica-gold {
+    color: #FFB81C;
+}
+
+.bg-jamaica-gold {
+    background-color: #FFB81C;
+}
+
+.bg-jamaica-green {
+    background-color: #007749;
+}
+
+.text-jamaica-green {
+    color: #007749;
+}
+
+.border-jamaica-gold {
+    border-color: #FFB81C;
+}
+
+.border-jamaica-green {
+    border-color: #007749;
+}
+
+.shadow-jamaica-green\/40 {
+    box-shadow: 0 10px 15px -3px rgba(0, 119, 73, 0.4);
+}
+
+/* Override global border styles if they interfere */
+.wifi-page-wrapper .btn {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.wifi-page-wrapper .bg-white {
+    background-color: #ffffff !important;
+}
+
+.wifi-page-wrapper .text-black {
+    color: #000000 !important;
 }
