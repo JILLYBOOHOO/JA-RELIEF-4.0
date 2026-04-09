@@ -254,7 +254,7 @@ export class AuthService {
     // Local Sync Bridge: Ensure Admin can see this even if API is down
     const req = {
       id: Date.now(),
-      requesterName: this.currentUserValue?.name || 'Anonymous',
+      requesterName: requestData.requesterName || this.currentUserValue?.name || 'Anonymous',
       items: requestData.items,
       status: 'Request Made',
       createdAt: new Date().toISOString()
@@ -263,7 +263,13 @@ export class AuthService {
     existing.push(req);
     localStorage.setItem('ja_relief_all_pantry_requests', JSON.stringify(existing));
     
-    return this.http.post<any>(`${this.apiUrl}/pantry-request`, requestData)
+    // Ensure the payload sent to the API contains the requesterName
+    const payload = {
+      ...requestData,
+      requesterName: requestData.requesterName || this.currentUserValue?.name || 'Anonymous'
+    };
+    
+    return this.http.post<any>(`${this.apiUrl}/pantry-request`, payload)
       .pipe(catchError(err => {
         console.warn('[AuthService] API down, request saved to local sync bridge.');
         return of({ status: 'Request Made' });

@@ -816,7 +816,7 @@ export class DashboardComponent implements OnInit {
 
     const newRequest: ImpactRequest = {
       id: Date.now().toString(),
-      requesterName: this.currentUser?.name || 'Anonymous',
+      requesterName: this.userName,
       location: parish,
       lat: PARISH_COORDS[parish]?.lat || PARISH_COORDS['Kingston'].lat,
       lng: PARISH_COORDS[parish]?.lng || PARISH_COORDS['Kingston'].lng,
@@ -844,6 +844,7 @@ export class DashboardComponent implements OnInit {
 
     // Production API Integration
     this.authService.submitPantryRequest({
+      requesterName: this.userName,
       items: selectedItems,
       otherItems: otherItems
     }).subscribe({
