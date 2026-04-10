@@ -171,9 +171,10 @@ body {
     }
 
     .admin-login-link, .header nav a.admin-login-link {
-        width: 100px !important; 
-        min-width: 100px !important;
-        max-width: 100px !important;
+        width: 140px !important; 
+        min-width: 140px !important;
+        max-width: 140px !important;
+        padding: 0 12px !important;
     }
 }
 
