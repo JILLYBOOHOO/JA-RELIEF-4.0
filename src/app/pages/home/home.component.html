@@ -29,11 +29,11 @@
                 </a>
                 <div class="flex flex-col md:flex-row gap-4 justify-center flex-wrap w-full">
                     <a [routerLink]="user.role === 'admin' ? '/admin' : '/dashboard'" 
-                       class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center border-4 border-black border-solid shadow-[6px_6px_0px_#000] bg-white text-black active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif" 
+                       class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center border-4 border-[#39FF14] border-solid shadow-[8px_8px_0px_#000] bg-white text-black active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[12px_12px_0px_#009B3A] hover:bg-zinc-50" 
                        [attr.aria-label]="user.role === 'admin' ? 'Go to Admin Portal' : 'Request Aid Dashboard'">
                         <span>{{ user.role === 'admin' ? 'Admin Portal' : 'Request Aid' }}</span>
                     </a>
-                    <a routerLink="/information" class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center border-4 border-white border-solid shadow-[6px_6px_0px_#009B3A] bg-white text-black active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif" aria-label="View more information">
+                    <a routerLink="/information" class="info-gradient-border inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center shadow-[6px_6px_0px_#000000] text-white active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif" aria-label="View more information">
                         <span>Emergency Information</span>
                     </a>
                 </div>
@@ -44,8 +44,8 @@
             <ng-template #notLoggedIn>
                 <div class="flex flex-col items-center gap-6">
                     <div class="flex flex-col md:flex-row gap-4 justify-center w-full max-w-[660px]">
-                        <a routerLink="/register" class="inline-flex items-center justify-center p-2.5 min-h-[65px] w-full max-w-[440px] md:w-[440px] rounded-xl text-center border-[5px] border-[#39FF14] border-solid shadow-[8px_8px_0px_#000] bg-white text-black active:translate-y-[4px] active:translate-x-[4px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif font-[950] text-lg uppercase tracking-tight hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[12px_12px_0px_#009B3A] group" aria-label="Register for disaster relief aid">
-                            <span class="material-symbols-outlined mr-2 text-[#009B3A] group-hover:animate-pulse">how_to_reg</span>
+                        <a routerLink="/register" class="inline-flex items-center justify-center p-2.5 min-h-[65px] w-full max-w-[440px] md:w-[440px] rounded-xl text-center border-[5px] border-[#39FF14] border-solid shadow-[8px_8px_0px_#000] bg-black text-white active:translate-y-[4px] active:translate-x-[4px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif font-[950] text-lg uppercase tracking-tight hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[12px_12px_0px_#009B3A] group" aria-label="Register for disaster relief aid">
+                            <span class="material-symbols-outlined mr-2 text-[#39FF14] group-hover:animate-pulse">how_to_reg</span>
                             <span>REGISTER TO REQUEST AID</span>
                         </a>
                         <a routerLink="/wifi-access" class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[320px] rounded-xl font-bold text-center border-4 border-[#39FF14] border-solid shadow-[6px_6px_0px_#000000] bg-black text-white active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif hover:border-white" aria-label="Get Wi-Fi access voucher">
@@ -55,17 +55,17 @@
                     </div>
                     
                     <div class="flex flex-col md:flex-row gap-4 justify-center flex-wrap w-full">
-                        <a routerLink="/login" class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center border-4 border-black border-solid shadow-[6px_6px_0px_#000000] bg-white text-black active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif" aria-label="Login to your account">
+                        <a routerLink="/login" class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center border-4 border-[#FED100] border-solid shadow-[8px_8px_0px_#000] bg-white text-black active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[12px_12px_0px_#FED100] hover:bg-zinc-50" aria-label="Login to your account">
                             <span>Login to Dashboard</span>
                         </a>
-                        <a routerLink="/donate" class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center border-4 border-black border-solid shadow-[6px_6px_0px_#009B3A] bg-white text-black active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif" aria-label="Donate to disaster relief">
+                        <a routerLink="/donate" class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center border-4 border-[#009B3A] border-solid shadow-[8px_8px_0px_#000] bg-white text-black active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[12px_12px_0px_#009B3A] hover:bg-zinc-50" aria-label="Donate to disaster relief">
                             <span class="material-symbols-outlined mr-2">volunteer_activism</span>
-                            <span>Donate Help</span>
+                            <span>Donate</span>
                         </a>
                     </div>
 
                     <div class="flex flex-col gap-4 items-center w-full">
-                        <a routerLink="/information" class="inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center border-4 border-white border-solid shadow-[6px_6px_0px_#000000] bg-black text-white active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif" aria-label="View more information">
+                        <a routerLink="/information" class="info-gradient-border inline-flex items-center justify-center p-2.5 min-h-[55px] w-full max-w-[320px] md:w-[280px] rounded-xl font-bold text-center shadow-[6px_6px_0px_#000000] text-white active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_#000] focus:outline-none transition-all font-serif" aria-label="View more information">
                             <span>Emergency Information</span>
                         </a>
                         <h2 class="text-3xl font-black text-[#ffcc00] mt-10 -mb-4 uppercase tracking-tighter italic">How JA Relief Helps Communities</h2>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="bg-white/10 backdrop-blur-md border border-white/15 p-6 rounded-2xl flex flex-col items-center" role="listitem" tabindex="0" aria-label="Feature: Donate Help to families">
                     <div class="text-[2.2rem] mb-3" aria-hidden="true">🤝</div>
-                    <div class="text-[1.2rem] font-bold text-white mb-1">Donate Help</div>
+                    <div class="text-[1.2rem] font-bold text-white mb-1">Donate</div>
                     <div class="text-[0.9rem] text-white text-center">Support families</div>
                 </div>
             </div>

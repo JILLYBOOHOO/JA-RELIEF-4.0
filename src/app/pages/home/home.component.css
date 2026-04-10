@@ -1,1 +1,36 @@
-/* Component styles are now migrated to Tailwind CSS utility classes in the HTML template. */
+.info-gradient-border {
+    position: relative;
+    background: #000 !important;
+    border: 4px solid transparent !important;
+    background-clip: padding-box !important;
+    transition: all 0.3s ease !important;
+}
+
+.info-gradient-border::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(135deg, #009B3A 0%, #FED100 100%);
+    border-radius: 14px; /* Slightly larger than rounded-xl to align with border */
+    z-index: -1;
+    transition: all 0.3s ease;
+}
+
+.info-gradient-border:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 155, 58, 0.25) !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+}
+
+.info-gradient-border:hover span {
+    color: #000000 !important;
+}
+
+.info-gradient-border:hover::before {
+    background: linear-gradient(135deg, #FED100 0%, #009B3A 100%);
+    filter: brightness(1.2);
+}

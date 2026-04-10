@@ -821,7 +821,8 @@ export class DashboardComponent implements OnInit {
       lat: PARISH_COORDS[parish]?.lat || PARISH_COORDS['Kingston'].lat,
       lng: PARISH_COORDS[parish]?.lng || PARISH_COORDS['Kingston'].lng,
       items: selectedItems,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      status: 'Request Made'
     };
 
     this.impactRequestService.addRequest(newRequest);

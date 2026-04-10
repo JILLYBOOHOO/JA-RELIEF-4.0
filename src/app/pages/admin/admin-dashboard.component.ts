@@ -102,7 +102,33 @@ function groupByCategory(items: typeof FULL_PANTRY) {
 export class AdminDashboardComponent implements OnInit, AfterViewInit {
     updateForm: FormGroup;
     editForm: FormGroup;
-    currentWeather: WeatherState = 'sunny';
+    currentWeather: any = { temp: 28, condition: 'Sunny' };
+    customWeatherCondition: string = '';
+
+    public weatherIcons: { [key: string]: string } = {
+      'sunny': 'sunny',
+      'cloudy': 'cloudy',
+      'windy': 'air',
+      'rainy': 'rainy',
+      'rainy_heavy': 'rainy_heavy',
+      'thunderstorm': 'thunderstorm',
+      'lightning': 'bolt',
+      'flood': 'flood',
+      'landslide': 'landslide'
+    };
+
+    get weatherIcon(): string {
+      const state = this.weatherService.getCurrentWeather();
+      return this.weatherIcons[state] || 'sunny';
+    }
+
+    get weatherDisplay(): string {
+      const state = this.weatherService.getCurrentWeather();
+      if (this.customWeatherCondition && state as any === 'custom') return this.customWeatherCondition;
+      // Format: 'rainy_heavy' -> 'Heavy Rain'
+      return state.split('_').reverse().map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+
     updates: AlertUpdate[] = [];
     allRequests: ImpactRequest[] = [];
     hazardReports: HazardReport[] = [];
@@ -151,38 +177,105 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
     isScannerOpen = false;
     scannerStatus = 'Waiting for QR Code...';
+    public scannerStream: MediaStream | null = null;
+    private scannerLoopId: any = null;
 
-    openScanner() {
+    async openScanner() {
       this.isScannerOpen = true;
-      this.scannerStatus = 'Scanning for QR Code...';
+      this.scannerStatus = 'Initializing Camera...';
       
-      // Simulate finding a QR code after a delay
-      setTimeout(() => {
-        this.scannerStatus = 'QR Code Detected. Verifying...';
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        this.scannerStream = stream;
+        this.scannerStatus = 'Scanning for QR Code...';
         
-        // Simulate verification and inventory update
-        setTimeout(() => {
-          this.scannerStatus = 'Verified! Items added to Inventory.';
+        // Brief delay to allow video to start
+        setTimeout(() => this.startScanningLoop(), 500);
+      } catch (err) {
+        console.error('Camera access failed:', err);
+        this.scannerStatus = 'Camera access denied. Please check permissions.';
+      }
+    }
+
+    private startScanningLoop() {
+      const video = document.getElementById('scanner-video') as HTMLVideoElement;
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      
+      if (!video || !context) return;
+
+      const scan = () => {
+        if (!this.isScannerOpen || !video.readyState) return;
+        
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          canvas.height = video.videoHeight;
+          canvas.width = video.videoWidth;
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
           
-          // Add some mock items from the scan
-          const water = FULL_PANTRY.find(i => i.name === 'Water (5L)');
-          if (water) water.quantity += 5;
-          const blankets = FULL_PANTRY.find(i => i.name === 'Blankets');
-          if (blankets) blankets.quantity += 3;
+          const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          // @ts-ignore
+          const code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: 'dontInvert',
+          });
+
+          if (code) {
+            this.handleScanResult(code.data);
+            return; // Stop scanning once found
+          }
+        }
+        this.scannerLoopId = requestAnimationFrame(scan);
+      };
+      
+      this.scannerLoopId = requestAnimationFrame(scan);
+    }
+
+    private handleScanResult(data: string) {
+      try {
+        const pledge = JSON.parse(data);
+        if (pledge && pledge.items) {
+          this.scannerStatus = 'QR Code Detected. Verifying...';
           
-          this.applyPantryFilter();
-          
-          // Close after showing success
           setTimeout(() => {
-            this.closeScanner();
-          }, 1500);
-        }, 1500);
-      }, 2000);
+            this.scannerStatus = 'Verified! Items added to Inventory.';
+            
+            // Actually update the pantry quantities
+            pledge.items.forEach((itemName: string) => {
+              // Extract item name (stripping " for [Name]" if present)
+              const cleanName = itemName.split(' for ')[0];
+              const item = FULL_PANTRY.find(i => i.name === cleanName);
+              if (item) {
+                item.quantity += 1; // Default to adding 1 per item scanned
+              }
+            });
+
+            this.applyPantryFilter();
+            
+            setTimeout(() => {
+              this.closeScanner();
+            }, 1500);
+          }, 1000);
+        } else {
+          this.scannerStatus = 'Invalid QR Code Format.';
+        }
+      } catch (e) {
+        this.scannerStatus = 'Unknown QR Data. Scanning...';
+        // Continue scanning if it's not JSON
+        this.scannerLoopId = requestAnimationFrame(() => this.startScanningLoop());
+      }
     }
 
     closeScanner() {
       this.isScannerOpen = false;
       this.scannerStatus = 'Waiting for QR Code...';
+      
+      if (this.scannerStream) {
+        this.scannerStream.getTracks().forEach(track => track.stop());
+        this.scannerStream = null;
+      }
+      if (this.scannerLoopId) {
+        cancelAnimationFrame(this.scannerLoopId);
+        this.scannerLoopId = null;
+      }
     }
 
     onPantrySearch() {
@@ -205,7 +298,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
     constructor(
         private fb: FormBuilder,
-        private weatherService: WeatherService,
+        public weatherService: WeatherService,
         private updateService: UpdateService,
         private authService: AuthService,
         private impactRequestService: ImpactRequestService,
@@ -287,6 +380,11 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
       });
     }
 
+    updateImpactRequestStatus(request: ImpactRequest, status: any) {
+      const updated = { ...request, status: status };
+      this.impactRequestService.updateRequest(updated);
+    }
+
     ngAfterViewInit() {
         setTimeout(() => {
             this.guideService.autoStartIfFirstTime();
@@ -361,6 +459,12 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
     setWeather(state: string) {
         this.weatherService.setWeather(state as WeatherState);
+    }
+
+    updateCustomWeather() {
+        if (this.customWeatherCondition.trim()) {
+            this.weatherService.setWeather('custom');
+        }
     }
 
     openEditModal(update: AlertUpdate) {

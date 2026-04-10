@@ -208,7 +208,7 @@
 
             <!-- Pantry & Donations Sections -->
             <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Recent In-Kind Pledges -->
+                <!-- Recent In-Kind Pledges (Slider Style) -->
                 <div id="inkind-section" class="bg-white p-8 rounded-3xl border border-[#becabf]/15 shadow-sm space-y-6">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -216,48 +216,46 @@
                         </div>
                         <span class="text-xs font-bold text-[#007749] px-2 py-1 bg-[#005c37]/5 rounded-lg">{{ livePledges.length }} Active</span>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="text-xs font-bold uppercase tracking-widest text-[#3e4941] border-b border-[#becabf]/10">
-                                    <th class="py-4">Donor</th>
-                                    <th class="py-4">Items</th>
-                                    <th class="py-4 text-center">Center</th>
-                                    <th class="py-4 text-right">Time</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm font-medium">
-                                <tr *ngFor="let pledge of livePledges" class="border-b border-[#becabf]/5">
-                                    <td class="py-4">
-                                        <div class="font-bold text-[#191c1e]">{{ pledge.donorName }}</div>
-                                        <div class="text-[10px] text-[#3e4941]">{{ pledge.donorPhone }}</div>
-                                    </td>
-                                    <td class="py-4 text-xs">{{ pledge.items.join(', ') }}</td>
-                                    <td class="py-4 text-center">
-                                        <span class="bg-[#96f6bd] text-[#005231] px-3 py-1 rounded-full text-[10px] font-black uppercase">{{ pledge.center }}</span>
-                                    </td>
-                                    <td class="py-4 text-right text-xs text-[#3e4941]">{{ pledge.createdAt | date:'shortTime' }}</td>
-                                </tr>
-                                <tr *ngIf="livePledges.length === 0">
-                                    <td colspan="4" class="py-8 text-center text-xs italic text-[#3e4941]">No in-kind pledges yet. Donations from the Donate page will appear here instantly.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    
+                    <!-- Slide Bar (Horizontal Scroll) -->
+                    <div class="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+                        <div *ngFor="let pledge of livePledges" 
+                             class="flex-shrink-0 w-64 p-5 rounded-2xl bg-gradient-to-br from-[#96f6bd]/10 to-transparent border border-[#96f6bd]/20 space-y-3 shadow-sm hover:shadow-md transition-all">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-black text-[#191c1e] text-sm uppercase leading-tight">{{ pledge.donorName }}</p>
+                                    <p class="text-[10px] font-bold text-[#3e4941] opacity-60">{{ pledge.donorPhone }}</p>
+                                </div>
+                                <span class="bg-black text-[8px] font-black text-white px-2 py-0.5 rounded uppercase tracking-widest">{{ pledge.createdAt | date:'shortTime' }}</span>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[8px] font-black uppercase text-[#3e4941] tracking-widest opacity-40">Items</p>
+                                <p class="text-xs font-bold text-[#191c1e] line-clamp-2">{{ pledge.items.join(', ') }}</p>
+                            </div>
+                            <div class="pt-2">
+                                <span class="bg-[#005c37] text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">{{ pledge.center }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Empty State in Slider -->
+                        <div *ngIf="livePledges.length === 0" class="w-full text-center py-8 bg-zinc-50 rounded-2xl border-2 border-dashed border-zinc-200">
+                             <p class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Awaiting incoming Pledges</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Monetary Donations -->
-                <div id="monetary-section" class="bg-white p-8 rounded-3xl border border-[#becabf]/15 shadow-sm space-y-6 flex flex-col">
+                <div id="monetary-section" class="bg-white p-8 rounded-3xl border border-[#becabf]/15 shadow-sm space-y-6 flex flex-col h-full">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <h2 class="text-xl font-bold text-[#191c1e] tracking-tight">Monetary Donations</h2>
                         </div>
                         <span class="text-xs font-bold text-[#007749] px-2 py-1 bg-[#005c37]/5 rounded-lg">+14% vs Last Month</span>
                     </div>
-                    <div class="flex-grow flex flex-col justify-center">
+                    <div class="flex flex-col">
                         <p class="text-xs font-bold uppercase tracking-widest text-[#3e4941] mb-1">Total Contributions</p>
                         <h3 class="text-4xl font-black text-[#191c1e]">${{ stats.monetary.total | number:'1.0-0' }} <span class="text-lg font-bold text-[#3e4941]">JMD</span></h3>
-                        <div class="mt-8 flex items-end gap-2 h-24">
+                        <div class="mt-4 flex items-end gap-2 h-20">
                             <div class="flex-grow bg-[#005c37]/10 rounded-t-lg h-1/2 group relative"></div>
                             <div class="flex-grow bg-[#005c37]/20 rounded-t-lg h-3/4 group relative"></div>
                             <div class="flex-grow bg-[#005c37]/10 rounded-t-lg h-2/3 group relative"></div>
@@ -352,48 +350,127 @@
             <!-- Weather Control & Survivor Requests -->
             <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Weather Control -->
-                <div class="bg-[#005c37] rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
+                <div class="bg-[#005c37] rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl min-h-[440px] flex flex-col justify-between">
                     <div class="relative z-10 space-y-6">
                         <div class="flex items-center justify-between">
                             <h3 class="text-2xl font-extrabold tracking-tight text-white">Weather Control</h3>
-                            <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter">Live Monitor</span>
+                            <span class="bg-white/20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10">Live Monitor</span>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-[#ffbb16]/20 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-4xl text-[#ffbb16]"></span>
+                        
+                        <!-- Real-time Status -->
+                        <div class="flex items-center gap-6 py-4">
+                            <div class="w-20 h-20 rounded-3xl bg-white/10 border border-white/20 flex items-center justify-center shadow-inner">
+                                <span class="material-symbols-outlined text-5xl text-[#ffbb16]">{{ weatherIcon }}</span>
                             </div>
                             <div>
-                                <p class="text-3xl font-black">28°C</p>
-                                <p class="text-sm text-white/80">Partly Cloudy • Wind 12km/h SE</p>
+                                <p class="text-5xl font-black tracking-tighter">{{ currentWeather.temp }}°C</p>
+                                <p class="text-lg font-bold text-white/90 uppercase tracking-tight">{{ weatherDisplay }}</p>
+                                <p class="text-xs text-white/60 font-medium mt-1">Wind 12km/h SE • Visibility 10km</p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-4 gap-2">
-                            <button (click)="setWeather('rainy')" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl flex flex-col items-center gap-1 transition-all">
-                                <span class="material-symbols-outlined"></span>
-                                <span class="text-[10px] font-bold uppercase">Precip</span>
-                            </button>
-                            <button (click)="setWeather('sunny')" class="bg-[#ffbb16] text-[#005c37] p-3 rounded-xl flex flex-col items-center gap-1 transition-all">
-                                <span class="material-symbols-outlined"></span>
-                                <span class="text-[10px] font-bold uppercase">Wind</span>
-                            </button>
-                            <button (click)="setWeather('stormy')" class="bg-white/10 hover:bg-white/20 p-3 rounded-xl flex flex-col items-center gap-1 transition-all">
-                                <span class="material-symbols-outlined"></span>
-                                <span class="text-[10px] font-bold uppercase">Humid</span>
-                            </button>
-                            <button class="bg-white/10 hover:bg-white/20 p-3 rounded-xl flex flex-col items-center gap-1 transition-all">
-                                <span class="material-symbols-outlined"></span>
-                                <span class="text-[10px] font-bold uppercase">Visib</span>
-                            </button>
+
+                        <!-- Rapid Deployment Toggles -->
+                        <div class="space-y-4">
+                            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Select Conditions</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <button *ngFor="let state of ['sunny', 'cloudy', 'windy', 'rainy', 'rainy_heavy', 'thunderstorm', 'lightning']" 
+                                        (click)="setWeather(state)" 
+                                        class="p-3 rounded-xl flex flex-col items-center gap-2 transition-all border border-white/10 group"
+                                        [ngClass]="weatherService.getCurrentWeather() === state ? 'bg-[#ffbb16] text-[#005c37] shadow-lg scale-105' : 'bg-white/5 hover:bg-white/10'">
+                                    <span class="material-symbols-outlined text-xl">{{ weatherIcons[state] }}</span>
+                                    <span class="text-[9px] font-black uppercase tracking-widest">{{ state.replace('_', ' ') }}</span>
+                                </button>
+                            </div>
+
+                            <!-- Custom Condition Entry -->
+                            <div class="pt-4 space-y-2 border-t border-white/10">
+                                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Custom Weather Entry</p>
+                                <div class="flex gap-2">
+                                    <input type="text" 
+                                           [(ngModel)]="customWeatherCondition" 
+                                           placeholder="Type condition..." 
+                                           class="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-sm font-bold text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#ffbb16]/50 transition-all"/>
+                                    <button (click)="updateCustomWeather()" 
+                                            class="bg-[#ffbb16] text-[#005c37] px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all">
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#007749] rounded-full blur-3xl opacity-50"></div>
                 </div>
 
-                <!-- Relief Logistics Fulfillment Queue -->
+                <!-- Relief Logistics Fulfillment: Survivor Aid Requests (Impact Map) -->
+                <div class="bg-white p-8 rounded-3xl border border-red-100 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-xl font-bold text-red-700 tracking-tight">Survivor Aid Requests (Impact Map)</h3>
+                            <span class="bg-red-50 text-red-600 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ allRequests.length }} Active</span>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-[#becabf]/10 max-h-[400px] overflow-y-auto pr-2">
+                        <div *ngFor="let req of allRequests" class="py-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-black text-[#191c1e] uppercase tracking-tight">{{ req.requesterName }} @ {{ req.location }}</p>
+                                    <div class="flex gap-2 mt-1">
+                                        <span *ngFor="let item of req.items" class="text-[9px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{{ item.name }}</span>
+                                    </div>
+                                    <p class="text-[10px] font-bold text-[#3e4941] uppercase tracking-widest mt-2">{{ req.timestamp | date:'short' }}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm border border-black/5"
+                                      [ngClass]="{
+                                        'status-made': req.status === 'Request Made',
+                                        'status-packing': req.status === 'Packing',
+                                        'status-transit': req.status === 'Out for Delivery',
+                                        'status-completed': req.status === 'Delivered' || req.status === 'Completed'
+                                      }">
+                                    {{ req.status || 'Request Made' }}
+                                </span>
+                            </div>
+                            
+                            <!-- Logistics Management Dropdown -->
+                            <div class="space-y-3">
+                                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-[#3e4941] opacity-60">Logistics Pipeline Control</p>
+                                <div class="flex gap-2">
+                                    <div class="relative flex-grow">
+                                        <select 
+                                            #statusSelect
+                                            [value]="req.status || 'Request Made'"
+                                            class="w-full bg-[#f2f4f6] text-[#191c1e] text-[10px] font-black uppercase tracking-widest px-4 py-3 rounded-xl appearance-none border-2 border-transparent focus:border-red-600 focus:bg-white transition-all cursor-pointer"
+                                        >
+                                            <option value="Request Made">🚨 Request Made</option>
+                                            <option value="Packing">📦 Packing</option>
+                                            <option value="Out for Delivery">🚚 In Transit</option>
+                                            <option value="Delivered">🏠 Arrived</option>
+                                            <option value="Completed">🏁 Archived</option>
+                                        </select>
+                                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[8px] font-black text-red-600 uppercase tracking-tighter">
+                                            CHOOSE STATUS
+                                        </div>
+                                    </div>
+                                    <button 
+                                        (click)="updateImpactRequestStatus(req, statusSelect.value)"
+                                        class="bg-red-600 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all active:scale-95 shadow-lg"
+                                    >
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="allRequests.length === 0" class="text-center py-12">
+                            <span class="material-symbols-outlined text-4xl text-slate-200 mb-2">emergency</span>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">No active survivor map requests</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relief Logistics Fulfillment Queue (In-Dashboard Requests) -->
                 <div class="bg-white p-8 rounded-3xl border border-[#becabf]/15 shadow-sm space-y-6">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <h3 class="text-xl font-bold text-[#191c1e] tracking-tight">Relief Logistics Fulfillment</h3>
+                            <h3 class="text-xl font-bold text-[#191c1e] tracking-tight">Pantry Logistics Fulfillment</h3>
                             <span class="bg-jamaica-green/10 text-jamaica-green px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ pantryRequests.length }} Total</span>
                         </div>
                     </div>
@@ -512,20 +589,33 @@
             <h3 class="text-2xl font-black text-white mb-2 tracking-tight">Incoming Supply Verification</h3>
             <p class="text-xs font-bold text-[#39FF14] uppercase tracking-widest mb-8">{{ scannerStatus }}</p>
             
-            <!-- Target Box Animation -->
-            <div class="relative w-48 h-48 mb-8">
-                <!-- Frame corners -->
-                <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#39FF14] rounded-tl-lg"></div>
-                <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#39FF14] rounded-tr-lg"></div>
-                <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[#39FF14] rounded-bl-lg"></div>
-                <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#39FF14] rounded-br-lg"></div>
-                
-                <!-- Scanning Laser Line -->
-                <div class="absolute left-0 right-0 h-0.5 bg-[#39FF14] shadow-[0_0_8px_#39FF14] animate-[scan_2s_ease-in-out_infinite]"></div>
-                
-                <!-- Visual center dot -->
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="w-1 h-1 rounded-full bg-[#39FF14]/50"></div>
+            <!-- Live Scanner Feed -->
+            <div class="relative w-full aspect-square max-w-[280px] bg-black rounded-3xl overflow-hidden mb-8 border-2 border-white/10 shadow-2xl">
+                <!-- Video Element for the stream -->
+                <video id="scanner-video" 
+                       [srcObject]="scannerStream" 
+                       autoplay 
+                       playsinline 
+                       class="w-full h-full object-cover grayscale brightness-125 contrast-125"
+                ></video>
+
+                <!-- Target Box Overlay -->
+                <div class="absolute inset-0 p-8">
+                    <div class="relative w-full h-full">
+                        <!-- Frame corners -->
+                        <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#39FF14] rounded-tl-lg"></div>
+                        <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#39FF14] rounded-tr-lg"></div>
+                        <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[#39FF14] rounded-bl-lg"></div>
+                        <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#39FF14] rounded-br-lg"></div>
+                        
+                        <!-- Scanning Laser Line -->
+                        <div class="absolute left-0 right-0 h-0.5 bg-[#39FF14] shadow-[0_0_8px_#39FF14] animate-[scan_2s_ease-in-out_infinite]"></div>
+                    </div>
+                </div>
+
+                <!-- Guidance Overlay -->
+                <div class="absolute bottom-4 left-4 right-4 text-center">
+                    <span class="text-[8px] font-black text-[#39FF14] uppercase tracking-widest bg-black/60 px-2 py-1 rounded">Camera Active • Face QR Code Here</span>
                 </div>
             </div>
 

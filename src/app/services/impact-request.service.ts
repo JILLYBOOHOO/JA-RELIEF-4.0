@@ -17,6 +17,7 @@ export interface ImpactRequest {
     lng: number;
     items: RequestItem[];
     timestamp: number;
+    status: 'Request Made' | 'Packing' | 'Out for Delivery' | 'Delivered' | 'Completed';
 }
 
 export const PARISH_COORDS: { [key: string]: { lat: number, lng: number } } = {
@@ -44,96 +45,72 @@ export class ImpactRequestService {
     private requestsSubject = new BehaviorSubject<ImpactRequest[]>([]);
     public requests$ = this.requestsSubject.asObservable();
 
+    private mockRequests: ImpactRequest[] = [];
+
     constructor(private http: HttpClient) {
+        // Initialize mock data once
+        const now = Date.now();
+        this.mockRequests = [
+            { id: 'mock-1', requesterName: 'Pam', location: 'St. Elizabeth', lat: PARISH_COORDS['St. Elizabeth'].lat, lng: PARISH_COORDS['St. Elizabeth'].lng, items: [{ name: 'Water', quantity: 1, status: 'pending' }], timestamp: now, status: 'Request Made' },
+            { id: 'mock-2', requesterName: 'Ricardo', location: 'Kingston', lat: PARISH_COORDS['Kingston'].lat, lng: PARISH_COORDS['Kingston'].lng, items: [{ name: 'Syrup', quantity: 1, status: 'pending' }], timestamp: now - 300000, status: 'Request Made' },
+            { id: 'mock-3', requesterName: 'Alicia', location: 'St. James', lat: PARISH_COORDS['St. James'].lat, lng: PARISH_COORDS['St. James'].lng, items: [{ name: 'Juice / Tin Juice', quantity: 2, status: 'pending' }], timestamp: now - 600000, status: 'Request Made' },
+            { id: 'mock-4', requesterName: 'Marcus', location: 'Portland', lat: PARISH_COORDS['Portland'].lat, lng: PARISH_COORDS['Portland'].lng, items: [{ name: 'Rice / Flour', quantity: 1, status: 'pending' }], timestamp: now - 900000, status: 'Request Made' },
+            { id: 'mock-5', requesterName: 'Tasha', location: 'Manchester', lat: PARISH_COORDS['Manchester'].lat, lng: PARISH_COORDS['Manchester'].lng, items: [{ name: 'Sugar / Cornmeal', quantity: 3, status: 'pending' }], timestamp: now - 1200000, status: 'Request Made' }
+        ];
         this.loadRequests();
     }
 
     private loadRequests() {
-      // Fetch from backend
       this.http.get<any[]>(this.apiUrl).subscribe({
         next: (rows) => {
           const dynamicNames = ['Pam', 'Ricardo', 'Alicia', 'Marcus', 'Tasha', 'Leon', 'Maya', 'Omar'];
-          const reqs = rows.map((r, i) => {
-            let parsedName = r.requesterName ? r.requesterName.trim() : 'Anonymous';
-            if (parsedName.toLowerCase() === 'anonymous') {
-                parsedName = dynamicNames[i % dynamicNames.length];
-            } else {
-                parsedName = parsedName.split(' ')[0]; // Only show first name
-            }
-
-            return {
-              id: r.id.toString(),
-              requesterName: parsedName,
-              location: r.location,
-              lat: parseFloat(r.lat),
-              lng: parseFloat(r.lng),
-              items: JSON.parse(r.items),
-              timestamp: new Date(r.createdAt).getTime()
-            };
+          const reqs: ImpactRequest[] = rows.map((r, i) => {
+              // Try to find if we already have a status for this request in our local cache
+              const existing = this.mockRequests.find(m => m.id === r.id.toString());
+              return {
+                  id: r.id.toString(),
+                  requesterName: r.requesterName || dynamicNames[i % dynamicNames.length],
+                  location: r.location,
+                  lat: parseFloat(r.lat),
+                  lng: parseFloat(r.lng),
+                  items: JSON.parse(r.items),
+                  timestamp: new Date(r.createdAt).getTime(),
+                  status: r.status || (existing ? existing.status : 'Request Made')
+              };
           });
-          this.requestsSubject.next(reqs);
+          
+          // Sync our local mock cache with the fresh backend data (preserving status)
+          this.mockRequests = [...reqs];
+          this.requestsSubject.next(this.mockRequests);
         },
         error: () => {
-          // Fallback to mock if API fails
-          console.warn('Using mock requests - backend unreachable');
-          const now = Date.now();
-          this.requestsSubject.next([
-            {
-              id: 'mock-1',
-              requesterName: 'Pam',
-              location: 'St. Elizabeth',
-              lat: PARISH_COORDS['St. Elizabeth'].lat,
-              lng: PARISH_COORDS['St. Elizabeth'].lng,
-              items: [{ name: 'Water', quantity: 1, status: 'pending' }],
-              timestamp: now
-            },
-            {
-              id: 'mock-2',
-              requesterName: 'Ricardo',
-              location: 'Kingston',
-              lat: PARISH_COORDS['Kingston'].lat,
-              lng: PARISH_COORDS['Kingston'].lng,
-              items: [{ name: 'Syrup', quantity: 1, status: 'pending' }],
-              timestamp: now - 300000
-            },
-            {
-              id: 'mock-3',
-              requesterName: 'Alicia',
-              location: 'St. James',
-              lat: PARISH_COORDS['St. James'].lat,
-              lng: PARISH_COORDS['St. James'].lng,
-              items: [{ name: 'Juice / Tin Juice', quantity: 2, status: 'pending' }],
-              timestamp: now - 600000
-            },
-            {
-              id: 'mock-4',
-              requesterName: 'Marcus',
-              location: 'Portland',
-              lat: PARISH_COORDS['Portland'].lat,
-              lng: PARISH_COORDS['Portland'].lng,
-              items: [{ name: 'Rice / Flour', quantity: 1, status: 'pending' }],
-              timestamp: now - 900000
-            },
-            {
-              id: 'mock-5',
-              requesterName: 'Tasha',
-              location: 'Manchester',
-              lat: PARISH_COORDS['Manchester'].lat,
-              lng: PARISH_COORDS['Manchester'].lng,
-              items: [{ name: 'Sugar / Cornmeal', quantity: 3, status: 'pending' }],
-              timestamp: now - 1200000
-            }
-          ]);
+          console.warn('Backend unreachable - using/retaining local state');
+          this.requestsSubject.next([...this.mockRequests]);
         }
       });
     }
 
     addRequest(request: ImpactRequest) {
-      this.http.post(this.apiUrl, request).subscribe(() => this.loadRequests());
+      this.mockRequests.unshift(request);
+      this.requestsSubject.next([...this.mockRequests]);
+      this.http.post(this.apiUrl, request).subscribe({
+          next: () => this.loadRequests(),
+          error: () => {} 
+      });
     }
 
     updateRequest(updatedRequest: ImpactRequest) {
-      this.http.put(`${this.apiUrl}/${updatedRequest.id}`, { items: updatedRequest.items }).subscribe(() => this.loadRequests());
+      // Update persistent local state
+      this.mockRequests = this.mockRequests.map(r => r.id === updatedRequest.id ? updatedRequest : r);
+      this.requestsSubject.next([...this.mockRequests]);
+
+      this.http.put(`${this.apiUrl}/${updatedRequest.id}`, { 
+        items: updatedRequest.items,
+        status: updatedRequest.status 
+      }).subscribe({
+        next: () => this.loadRequests(),
+        error: () => console.warn('Update failed - kept local changes')
+      });
     }
 
     getRequests(): ImpactRequest[] {
