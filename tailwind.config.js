@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// Force rebuild to fix missing styles
 module.exports = {
   darkMode: 'class',
   content: [
