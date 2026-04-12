@@ -17,7 +17,12 @@ export class GuideService {
 
   private currentDriver: any;
 
-  public startGuideForCurrentPage(force = true, key?: string) {
+    public startGuideForCurrentPage(force = true, key?: string) {
+        if (this.accessibilityService.isAudioEnabled && !this.speechService.hasVoicePermission) {
+            (this.speechService as any).withPermission(() => this.startGuideForCurrentPage(force, key));
+            return;
+        }
+
     const currentUrl = this.router.url.split('?')[0];
     const storageKey = key ? `guide_seen_${key}` : `guide_seen_${currentUrl}`;
 

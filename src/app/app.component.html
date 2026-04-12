@@ -26,6 +26,24 @@
 <app-alert></app-alert>
 
 <!-- Back to Top Button -->
-<button class="back-to-top" [class.show]="showBackToTop" (click)="scrollToTop()" aria-label="Back to top">
+<button class="back-to-top" [class.show]="showBackToTop" (click)='scrollToTop()' aria-label="Back to top">
   <span class="material-symbols-outlined">arrow_upward</span>
 </button>
+
+<!-- Voice & Speech Custom Permission Modal -->
+<div class="voice-modal-overlay" *ngIf="showVoiceModal">
+    <div class="voice-modal">
+        <div class="voice-modal-header">
+            <span class="material-symbols-outlined voice-icon">mic_external_on</span>
+            <h2>Speech Services Required</h2>
+        </div>
+        <p class="voice-modal-body">
+            To use Voice Navigation and Read Aloud features, we need to connect to your device's speech services. 
+            This helps us make the app easier to use hands-free during emergencies.
+        </p>
+        <div class="voice-modal-footer">
+            <button class="btn-deny" (click)="speechService.denyPermission()">Maybe Later</button>
+            <button class="btn-grant" (click)="speechService.grantPermission()">Got it, Turn on Voice</button>
+        </div>
+    </div>
+</div>

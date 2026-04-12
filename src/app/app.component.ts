@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AccessibilityService, FontSize } from './services/accessibility.service';
+import { SpeechService } from './services/speech.service';
 
 @Component({
   selector: 'app-root',
@@ -15,18 +16,28 @@ export class AppComponent implements OnInit {
   currentFontSize: FontSize = 'normal';
   showBackToTop = false;
 
-  constructor(private router: Router, private accessibilityService: AccessibilityService) {
+  showVoiceModal = false;
+
+  constructor(
+    private router: Router, 
+    private accessibilityService: AccessibilityService,
+    public speechService: SpeechService
+  ) {
     this.isOnline = navigator.onLine;
 
     window.addEventListener('online', () => this.isOnline = true);
     window.addEventListener('offline', () => this.isOnline = false);
+
+    this.speechService.showPermissionModal$.subscribe(show => {
+      this.showVoiceModal = show;
+    });
 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       const url = event.urlAfterRedirects;
       this.isDashboard = url.includes('/dashboard');
-      window.scrollTo(0, 0); // Scroll to top on navigation
+      window.scrollTo(0, 0); 
     });
 
     this.accessibilityService.fontSize$.subscribe(size => {

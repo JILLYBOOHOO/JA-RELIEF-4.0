@@ -15,9 +15,27 @@ export class SpeechService {
     private voiceModeSource = new BehaviorSubject<'command' | 'dictation' | 'none'>('none');
     public voiceMode$ = this.voiceModeSource.asObservable();
     
+    private permissionModalSource = new BehaviorSubject<boolean>(false);
+    public showPermissionModal$ = this.permissionModalSource.asObservable();
+    
+    public hasVoicePermission = false;
+    private pendingAction: (() => void) | null = null;
     private lastProcessedIndex = -1;
 
     constructor(private router: Router, private zone: NgZone) {
+        this.hasVoicePermission = localStorage.getItem('voice_permission_granted') === 'true';
+        
+        // Initial setup for synthesis if available, but don't speak yet
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                this.getNaturalVoice(); 
+            };
+        }
+    }
+
+    private initVoiceRecognition() {
+        if (this.recognition) return;
+        
         const { webkitSpeechRecognition }: any = window;
         if (webkitSpeechRecognition) {
             this.recognition = new webkitSpeechRecognition();
@@ -30,21 +48,19 @@ export class SpeechService {
                     if (event.results[i].isFinal && i > this.lastProcessedIndex) {
                         this.lastProcessedIndex = i;
                         const command = event.results[i][0].transcript.toLowerCase().trim();
-                        console.log('Voice command received:', command);
                         this.handleCommand(command);
                     }
                 }
             };
-
+            
             this.recognition.onstart = () => {
                 this.zone.run(() => this.isListeningSource.next(true));
                 (this.recognition as any).started = true;
             };
 
             this.recognition.onerror = (event: any) => {
-                console.error('Speech recognition error:', event.error);
                 if (event.error === 'not-allowed') {
-                    this.speak('Microphone access denied. Please allow microphone permissions in your browser.');
+                    this.speak('Microphone access denied.');
                 }
                 this.zone.run(() => this.isListeningSource.next(false));
                 (this.recognition as any).started = false;
@@ -55,15 +71,35 @@ export class SpeechService {
                 (this.recognition as any).started = false;
             };
         }
+    }
 
-        // Pre-load and lock in the best female voice
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                this.getNaturalVoice(); // Trigger caching
-            };
-            this.getNaturalVoice();
+    public grantPermission() {
+        this.hasVoicePermission = true;
+        localStorage.setItem('voice_permission_granted', 'true');
+        this.permissionModalSource.next(false);
+        this.initVoiceRecognition();
+        
+        if (this.pendingAction) {
+            this.pendingAction();
+            this.pendingAction = null;
         }
     }
+
+    public denyPermission() {
+        this.permissionModalSource.next(false);
+        this.pendingAction = null;
+    }
+
+    public withPermission(action: () => void) {
+        if (this.hasVoicePermission) {
+            this.initVoiceRecognition();
+            action();
+        } else {
+            this.pendingAction = action;
+            this.permissionModalSource.next(true);
+        }
+    }
+
 
     private cachedVoice: SpeechSynthesisVoice | null = null;
 
@@ -90,40 +126,41 @@ export class SpeechService {
     }
 
     speak(text: string): void {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Clear any pending speech
-            const utterance = new SpeechSynthesisUtterance(text);
-            const voice = this.getNaturalVoice();
-            if (voice) utterance.voice = voice;
-            
-            // Refined feminine pitch and rate for consistency
-            utterance.rate = 1.0; 
-            utterance.pitch = 1.1; // Slightly higher pitch for clarity/femininity
-            utterance.volume = 1;
-            
-            window.speechSynthesis.speak(utterance);
-        }
+        this.withPermission(() => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voice = this.getNaturalVoice();
+                if (voice) utterance.voice = voice;
+                
+                utterance.rate = 1.0; 
+                utterance.pitch = 1.1; 
+                utterance.volume = 1;
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        });
     }
 
+
     toggleListening(mode: 'command' | 'dictation' = 'command'): void {
-        if (!this.recognition) return;
+        this.withPermission(() => {
+            if (!this.recognition) return;
 
-        const currentMode = this.voiceModeSource.value;
-        const isCurrentlyListening = (this.recognition as any).started;
+            const currentMode = this.voiceModeSource.value;
+            const isCurrentlyListening = (this.recognition as any).started;
 
-        if (isCurrentlyListening) {
-            if (currentMode === mode) {
-                // Same mode, stop it
-                this.stopListening();
+            if (isCurrentlyListening) {
+                if (currentMode === mode) {
+                    this.stopListening();
+                } else {
+                    this.stopListening();
+                    setTimeout(() => this.startListening(mode), 300);
+                }
             } else {
-                // Different mode, switch it
-                this.stopListening();
-                setTimeout(() => this.startListening(mode), 300);
+                this.startListening(mode);
             }
-        } else {
-            // Not listening, start it
-            this.startListening(mode);
-        }
+        });
     }
 
     private fieldResultSource = new Subject<string>();
@@ -132,15 +169,18 @@ export class SpeechService {
     private isFieldInputMode = false;
 
     startFieldInput(): void {
-        if (!this.recognition) return;
-        this.isFieldInputMode = true;
-        this.startListening();
+        this.withPermission(() => {
+            if (!this.recognition) return;
+            this.isFieldInputMode = true;
+            this.startListening();
+        });
     }
 
     stopFieldInput(): void {
         this.isFieldInputMode = false;
         this.stopListening();
     }
+
 
     private startListening(mode: 'command' | 'dictation' = 'command'): void {
         try {
@@ -237,27 +277,30 @@ export class SpeechService {
     }
 
     toggleReadPage(): void {
-        if (this.isReadingSource.value) {
-            window.speechSynthesis.cancel();
-            this.isReadingSource.next(false);
-            this.speak('Stopped reading');
-        } else {
-            const mainContent = document.getElementById('main') || document.body;
-            const text = (mainContent.innerText || mainContent.textContent || '').substring(0, 15000); // safety cap
-            if (text) {
-                this.isReadingSource.next(true);
-                this.speak('Reading. ');
-                
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voice = this.getNaturalVoice();
-                if (voice) utterance.voice = voice;
-                utterance.rate = 1.0; utterance.pitch = 1.1;
-                utterance.onend = () => this.zone.run(() => this.isReadingSource.next(false));
-                utterance.onerror = () => this.zone.run(() => this.isReadingSource.next(false));
-                window.speechSynthesis.speak(utterance);
+        this.withPermission(() => {
+            if (this.isReadingSource.value) {
+                window.speechSynthesis.cancel();
+                this.isReadingSource.next(false);
+                this.speak('Stopped reading');
+            } else {
+                const mainContent = document.getElementById('main') || document.body;
+                const text = (mainContent.innerText || mainContent.textContent || '').substring(0, 15000); // safety cap
+                if (text) {
+                    this.isReadingSource.next(true);
+                    this.speak('Reading. ');
+                    
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    const voice = this.getNaturalVoice();
+                    if (voice) utterance.voice = voice;
+                    utterance.rate = 1.0; utterance.pitch = 1.1;
+                    utterance.onend = () => this.zone.run(() => this.isReadingSource.next(false));
+                    utterance.onerror = () => this.zone.run(() => this.isReadingSource.next(false));
+                    window.speechSynthesis.speak(utterance);
+                }
             }
-        }
+        });
     }
+
 
     private insertTextAtCursor(text: string): void {
         const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
