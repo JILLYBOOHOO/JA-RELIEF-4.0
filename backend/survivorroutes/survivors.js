@@ -565,7 +565,7 @@ router.post('/update-medical-info', authenticateToken, async (req, res, next) =>
     `, [bloodType, weight, allergies, medicalConditions, currentMedications, emergencyContact, survivorId]);
 
     res.json({ message: 'Medical information updated successfully.' });
-
+  } catch (err) {
     next(err);
   }
 });
