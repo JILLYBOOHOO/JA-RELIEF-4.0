@@ -142,7 +142,18 @@ export class AuthService {
 
   register(survivorData: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register`, survivorData)
-      .pipe(catchError(this.handleError));
+      .pipe(
+        map(response => {
+          if (response.token && response.user) {
+            const normalized = this.normalizeUser(response.user);
+            localStorage.setItem('survivor_token', response.token);
+            localStorage.setItem('survivor_user', JSON.stringify(normalized));
+            this.currentUserSubject.next(normalized);
+          }
+          return response;
+        }),
+        catchError(this.handleError)
+      );
   }
 
   logout(): void {
