@@ -2,19 +2,19 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 async function init() {
+  const dbName = process.env.DB_NAME || 'defaultdb';
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD,
+    database: dbName,
     ssl: {
       rejectUnauthorized: false // Required for Aiven
     }
   });
 
-  const dbName = process.env.DB_NAME || 'ja_relief';
-  await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
-  await connection.query(`USE ${dbName}`);
+  console.log(`📡 Connected to ${dbName} on Aiven Cloud...`);
 
   await connection.query(`
     CREATE TABLE IF NOT EXISTS survivors (
@@ -141,7 +141,7 @@ async function init() {
     console.log(`✅ Secure admin created: ID Number "${secureAdminId}", password "${secureAdminPwd}"`);
     
     // Optional: Remove the legacy sequential admin if it exists
-    await connection.query('DELETE FROM admins WHERE idNumber = "123456"');
+    await connection.query("DELETE FROM admins WHERE idNumber = '123456'");
   }
 
   await connection.query(`
