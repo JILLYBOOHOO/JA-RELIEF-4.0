@@ -4,8 +4,12 @@ require('dotenv').config();
 async function init() {
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD,
+    ssl: {
+      rejectUnauthorized: false // Required for Aiven
+    }
   });
 
   const dbName = process.env.DB_NAME || 'ja_relief';
