@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class SurvivorService {
 
-    private apiUrl = 'http://localhost:3000/api/survivors';
+    private apiUrl = '/api/survivors';
 
     constructor(private http: HttpClient) { }
 

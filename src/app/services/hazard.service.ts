@@ -18,7 +18,7 @@ export interface HazardReport {
   providedIn: 'root'
 })
 export class HazardService {
-  private apiUrl = 'http://localhost:3000/api/hazards';
+  private apiUrl = '/api/hazards';
 
   constructor(private http: HttpClient) { }
 

@@ -39,7 +39,7 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  private apiUrl = 'http://localhost:3000/api/survivors';
+  private apiUrl = '/api/survivors'; // Use relative path for production/proxy compatibility
 
   constructor(private http: HttpClient) {
     const savedUser = localStorage.getItem('survivor_user');
@@ -59,7 +59,7 @@ export class AuthService {
   private handleError(error: any) {
     if (typeof error === 'string') return throwError(() => error);
     
-    let errorMessage = 'An unknown error occurred. Please ensure the backend server is running on port 3000.';
+    let errorMessage = 'Unable to connect to the JA RELIEF server. Please ensure the backend is running and your database is connected.';
     if (error.error instanceof ErrorEvent) {
       errorMessage = `Client Error: ${error.error.message}`;
     } else {

@@ -25,7 +25,7 @@ export interface MonetaryDonation {
   providedIn: 'root'
 })
 export class DonationService {
-  private apiUrl = 'http://localhost:3000/api/donations';
+  private apiUrl = '/api/donations';
 
   // In-memory live pledge feed for admin dashboard
   private pledgesSubject = new BehaviorSubject<PledgeDonation[]>([]);

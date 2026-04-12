@@ -41,7 +41,7 @@ export const PARISH_COORDS: { [key: string]: { lat: number, lng: number } } = {
     providedIn: 'root'
 })
 export class ImpactRequestService {
-    private apiUrl = 'http://localhost:3000/api/requests';
+    private apiUrl = '/api/requests';
     private requestsSubject = new BehaviorSubject<ImpactRequest[]>([]);
     public requests$ = this.requestsSubject.asObservable();
 

@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy_key_to_prevent_crash');
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeKey ? require('stripe')(stripeKey) : {
+    paymentIntents: {
+        create: () => Promise.reject(new Error('Stripe API Key is missing. Please configure STRIPE_SECRET_KEY in .env'))
+    }
+};
 
 // Create a PaymentIntent for Stripe
 router.post('/create-payment-intent', async (req, res) => {
