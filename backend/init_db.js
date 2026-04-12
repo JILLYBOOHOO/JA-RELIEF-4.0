@@ -48,9 +48,30 @@ async function init() {
       failedAttempts INT DEFAULT 0,
       lockoutUntil TIMESTAMP NULL,
       email VARCHAR(150),
+      magicToken VARCHAR(255),
+      magicTokenExpires TIMESTAMP NULL,
+      isMagicVerified BOOLEAN DEFAULT FALSE,
+      hasPin BOOLEAN DEFAULT FALSE,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Force-add missing columns to existing tables on Cloud
+  const addCols = [
+    { name: 'magicToken', def: 'VARCHAR(255)' },
+    { name: 'magicTokenExpires', def: 'TIMESTAMP NULL' },
+    { name: 'isMagicVerified', def: 'BOOLEAN DEFAULT FALSE' },
+    { name: 'hasPin', def: 'BOOLEAN DEFAULT FALSE' }
+  ];
+
+  for (const col of addCols) {
+    try {
+      await connection.query(`ALTER TABLE survivors ADD COLUMN ${col.name} ${col.def}`);
+      console.log(`✅ Verified Column: ${col.name}`);
+    } catch (e) {
+      if (e.code !== 'ER_DUP_COLUMN_NAME') console.warn(`Note: ${col.name} status: ${e.message}`);
+    }
+  }
 
   await connection.query(`
     CREATE TABLE IF NOT EXISTS pantry (
