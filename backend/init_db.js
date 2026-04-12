@@ -131,8 +131,8 @@ async function init() {
 
   const bcrypt = require('bcrypt');
   // Secure Admin Credentials (non-sequential to pass new validation)
-  const secureAdminId = "842931";
-  const secureAdminPwd = "adminpassword123";
+  const secureAdminId = "1001";
+  const secureAdminPwd = "Admin@2026";
 
   const [adminRows] = await connection.query('SELECT * FROM admins WHERE idNumber = ?', [secureAdminId]);
   if (adminRows.length === 0) {
@@ -140,8 +140,18 @@ async function init() {
     await connection.query('INSERT INTO admins (idNumber, password) VALUES (?, ?)', [secureAdminId, hashedPassword]);
     console.log(`✅ Secure admin created: ID Number "${secureAdminId}", password "${secureAdminPwd}"`);
     
-    // Optional: Remove the legacy sequential admin if it exists
-    await connection.query("DELETE FROM admins WHERE idNumber = '123456'");
+    // Create Test Survivor: Katie (only if not already there)
+    const userPwd = "Survivor123!";
+    const [existingKatie] = await connection.query('SELECT * FROM survivors WHERE idNumber = ?', ['KATIE-777']);
+    if (existingKatie.length === 0) {
+      const userHash = await bcrypt.hash(userPwd, 10);
+      const { generateCardNumber, generateCVV, generatePIN } = require('../utils/card.util');
+      await connection.query(`
+        INSERT INTO survivors (fullName, contact, idNumber, password, parish, cardNumber, cvv, pin, balance)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, ['Katie', '876-KATIE-99', 'KATIE-777', userHash, 'Kingston', generateCardNumber(), generateCVV(), generatePIN(), 50000]);
+      console.log(`✅ Test User created: Identity "Katie", password "${userPwd}"`);
+    }
   }
 
   await connection.query(`
