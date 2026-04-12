@@ -6,6 +6,7 @@
     "start": "node server.js",
     "dev": "ng serve --proxy-config proxy.conf.json",
     "start-backend": "npm start --prefix backend",
+    "init-cloud-db": "npm run init-db --prefix backend",
     "build": "ng build --configuration production",
     "build-prod": "ng build --configuration production --aot --build-optimizer --vendor-chunk=false",
     "watch": "ng build --watch --configuration development",
