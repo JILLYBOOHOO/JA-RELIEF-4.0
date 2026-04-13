@@ -109,6 +109,8 @@ body {
     font-weight: normal;
     font-variant: normal;
     -webkit-font-smoothing: antialiased;
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
 }
 
 .icon-home::before { content: "\e88a"; }
