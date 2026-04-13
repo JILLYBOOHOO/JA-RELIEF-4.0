@@ -59,10 +59,13 @@
 }
 
 .form-group {
-    margin-bottom: 2.5rem;
-    display: flex;
-    flex-direction: column;
-    clear: both;
+    margin-bottom: 2rem !important;
+    display: block !important; /* Force natural block flow */
+    position: relative !important;
+    height: auto !important;
+    min-height: min-content !important;
+    clear: both !important;
+    width: 100% !important;
 }
 
 label {
@@ -109,41 +112,44 @@ textarea {
 
 /* Checkbox Layout - ULTRA LARGE */
 .form-checkbox {
-    display: grid;
-    grid-template-columns: 40px 1fr;
-    align-items: start;
-    gap: 15px;
-    margin: 2rem 0;
-    padding: 1.5rem;
-    background: #ebf4ff;
-    border-radius: 16px;
-    border: 2px solid #bfd8ff;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: hidden; /* Prevent text leakage */
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    margin: 2.5rem 0 !important;
+    padding: 2rem !important;
+    background: #ebf4ff !important;
+    border-radius: 16px !important;
+    border: 3px solid #bfd8ff !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 60px !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    overflow: visible !important; /* Crucial: Let content show */
 }
 
 .form-checkbox input[type="checkbox"] {
-    width: 28px;
-    height: 28px;
-    margin-top: 2px;
-    cursor: pointer;
-    accent-color: #3498db;
+    width: 28px !important;
+    height: 28px !important;
+    margin: 4px 0 0 0 !important;
+    flex-shrink: 0 !important;
+    position: static !important;
 }
 
 .form-checkbox label {
-    display: inline-block !important; /* Stable for text wrap */
-    position: static !important; /* Prevent floating */
-    height: auto !important; /* Ensure box grows with text */
+    display: block !important;
+    position: static !important;
     margin: 0 !important;
-    font-size: 1.4rem;
-    font-weight: 700;
-    cursor: pointer;
-    color: #1a2c3d;
-    line-height: 1.5 !important; /* Ensure breathing room */
-    word-break: break-word;
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    line-height: 1.5 !important;
+    color: #1a2c3d !important;
+    cursor: pointer !important;
+    word-wrap: break-word !important;
     white-space: normal !important;
-    vertical-align: top;
+    height: auto !important;
+    flex: 1 !important;
 }
 
 /* Fieldset for Radios - ULTRA LARGE */
