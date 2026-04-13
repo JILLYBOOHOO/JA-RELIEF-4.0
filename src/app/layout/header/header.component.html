@@ -22,7 +22,7 @@
         <ng-container *ngIf="currentUser as user; else notLoggedIn">
             <div class="user-welcome-badge">
                 <span class="welcome-label">HEY WELCOME</span>
-                <span class="user-name">{{ user.name || 'Katie' }}</span>
+                <span class="user-name">{{ user.name || 'Survivor' }}</span>
             </div>
             
             <a *ngIf="user.role === 'admin' || user.role === 'survivor' || user.role === 'donor'" 

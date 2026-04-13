@@ -244,8 +244,8 @@ export class DashboardComponent implements OnInit {
 
   get userName(): string {
     const user = this.currentUser || this.authService.currentUserValue;
-    if (!user) return 'Katie';
-    return user.name || user.fullName || user.email?.split('@')[0] || 'Katie';
+    if (!user) return 'Relief Survivor';
+    return user.name || user.fullName || user.email?.split('@')[0] || 'Relief Survivor';
   }
 
   get displayId(): string {

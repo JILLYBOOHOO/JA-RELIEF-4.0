@@ -78,7 +78,7 @@ export class AuthService {
             const u = response.user as any;
             const normalizedUser: User = {
               ...response.user,
-              name: u.name || u.fullName || u.fullname || 'Katie',
+              name: u.name || u.fullName || u.fullname || u.FullName || 'Survivor',
               idNumber: u.idNumber || u.id_number || u.id?.toString() || '876###'
             };
             localStorage.setItem('survivor_token', response.token);
@@ -192,10 +192,11 @@ export class AuthService {
     }
 
     // Fallbacks
+    // Fallbacks
     if (!name && user.role === 'admin') {
       name = 'Administrator';
     } else if (!name || name.trim() === '') {
-      name = 'Katie'; // Defaulting to Katie for user experience
+      name = 'Relief Survivor'; // Neutral fallback
     }
 
     const id = user.idNumber || user.id_number || user.IdNumber || user.id?.toString() || '876-RELIEF';
