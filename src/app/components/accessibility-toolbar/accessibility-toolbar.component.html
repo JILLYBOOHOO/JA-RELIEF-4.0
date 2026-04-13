@@ -12,19 +12,19 @@
       </div>
       <div class="divider"></div>
       <button class="voice-nav-indicator page-guide-btn" (click)='startGuide()' title='Launch Interactive Page Guide with Text & Voice'>
-         <span class="material-symbols-outlined">menu_book</span>
+         <span class="icon-guide"></span>
          Page Guide
       </button>
       <button class="voice-nav-indicator" [class.is-active]="(speechService.isReading$ | async)" (click)="readPage()" title="Read all text on this page aloud">
-         <span class="material-symbols-outlined">{{ (speechService.isReading$ | async) ? 'stop_circle' : 'record_voice_over' }}</span>
+         <span [class]="(speechService.isReading$ | async) ? 'icon-stop' : 'icon-read'"></span>
          {{ (speechService.isReading$ | async) ? 'Reading' : 'Read Page' }}
       </button>
        <button class="voice-nav-indicator" [class.is-active]="(accessibilityService.isAudioEnabled$ | async)" (click)="toggleAudio()" title="Toggle Voice Guidance / Mute Assistant">
-         <span class="material-symbols-outlined">{{ (accessibilityService.isAudioEnabled$ | async) ? 'volume_up' : 'volume_off' }}</span>
+         <span [class]="(accessibilityService.isAudioEnabled$ | async) ? 'icon-volume-on' : 'icon-volume-off'"></span>
          {{ (accessibilityService.isAudioEnabled$ | async) ? 'Audio On' : 'Audio Off' }}
       </button>
       <button class="voice-nav-indicator" [class.is-active]="(speechService.voiceMode$ | async) === 'command'" (click)="toggleVoice()" title="Toggle Universal Voice Navigation (Mic Command Mode)">
-         <span class="material-symbols-outlined">{{ (speechService.voiceMode$ | async) === 'command' ? 'mic' : 'mic_off' }}</span>
+         <span [class]="(speechService.voiceMode$ | async) === 'command' ? 'icon-mic-on' : 'icon-mic-off'"></span>
          {{ (speechService.voiceMode$ | async) === 'command' ? 'Listening' : 'Use Voice' }}
       </button>
     </div>

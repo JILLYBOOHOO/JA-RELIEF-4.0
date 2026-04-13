@@ -122,6 +122,18 @@ body {
 .icon-typing::before { content: "\e029"; }
 .icon-light::before { content: "\e518"; }
 .icon-dark::before { content: "\e51c"; }
+.icon-volunteer::before { content: "\eaf1"; }
+.icon-guide::before { content: "\e8ef"; }
+.icon-read::before { content: "\f222"; }
+.icon-audio::before { content: "\e050"; }
+.icon-microphone::before { content: "\e029"; }
+.icon-reg::before { content: "\e174"; }
+.icon-wifi::before { content: "\e63e"; }
+.icon-stop::before { content: "\e047"; }
+.icon-volume-on::before { content: "\e050"; }
+.icon-volume-off::before { content: "\e04f"; }
+.icon-mic-on::before { content: "\e029"; }
+.icon-mic-off::before { content: "\e02b"; }
 
 .header nav a[routerLink="/"] {
     background: #000000 !important;
