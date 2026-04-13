@@ -22,6 +22,7 @@ import { SharedModule } from './shared/shared.module';
 import { AlertComponent } from './components/alert/alert.component';
 import { AccessibilityToolbarComponent } from './components/accessibility-toolbar/accessibility-toolbar.component';
 import { AiChatbotComponent } from './components/ai-chatbot/ai-chatbot.component';
+import { TermsComponent } from './pages/terms/terms.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { AiChatbotComponent } from './components/ai-chatbot/ai-chatbot.component
     BreadcrumbComponent,
     AlertComponent,
     AccessibilityToolbarComponent,
-    AiChatbotComponent
+    AiChatbotComponent,
+    TermsComponent
   ],
   imports: [
     BrowserModule,
