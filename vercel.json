@@ -16,7 +16,16 @@
       ]
     },
     {
-      "source": "/(.*)\\.(js|css|webp|png|jpg|svg|ico|webmanifest)",
+      "source": "/(index.html|ngsw-worker.js|manifest.webmanifest)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(js|css|webp|png|jpg|svg|ico)",
       "headers": [
         {
           "key": "Cache-Control",
