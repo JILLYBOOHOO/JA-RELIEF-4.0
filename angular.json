@@ -64,7 +64,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "namedChunks": false,
-              "subresourceIntegrity": true,
+              "subresourceIntegrity": false,
               "allowedCommonJsDependencies": ["qrcode"]
             },
             "development": {
