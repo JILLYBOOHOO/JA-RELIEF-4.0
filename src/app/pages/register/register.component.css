@@ -132,15 +132,18 @@ textarea {
 }
 
 .form-checkbox label {
-    display: block; /* Force block behavior in grid column */
-    margin: 0;
+    display: inline-block !important; /* Stable for text wrap */
+    position: static !important; /* Prevent floating */
+    height: auto !important; /* Ensure box grows with text */
+    margin: 0 !important;
     font-size: 1.4rem;
     font-weight: 700;
     cursor: pointer;
     color: #1a2c3d;
-    line-height: 1.4;
+    line-height: 1.5 !important; /* Ensure breathing room */
     word-break: break-word;
-    white-space: normal;
+    white-space: normal !important;
+    vertical-align: top;
 }
 
 /* Fieldset for Radios - ULTRA LARGE */
