@@ -15,8 +15,21 @@ app.use(compression());
 
 // Security Middlewares
 app.use(helmet({
-  crossOriginResourcePolicy: false,
-  contentSecurityPolicy: false // Relaxed for external SDKs used in emergency
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      "default-src": ["'self'"],
+      "script-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://maps.googleapis.com"],
+      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      "font-src": ["'self'", "https://fonts.gstatic.com"],
+      "img-src": ["'self'", "data:", "https://maps.gstatic.com", "https://maps.googleapis.com"],
+      "connect-src": ["'self'", "https://maps.googleapis.com"],
+      "object-src": ["'none'"],
+      "upgrade-insecure-requests": [],
+    },
+  },
 }));
 
 app.use(cors({
