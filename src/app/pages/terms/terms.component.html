@@ -1,0 +1,47 @@
+<section class="terms-container p-6 md:p-12 max-w-4xl mx-auto bg-white shadow-xl rounded-3xl my-12 border-2 border-zinc-100">
+    <header class="mb-12 text-center">
+        <h1 class="text-4xl font-black text-zinc-900 uppercase tracking-tighter mb-4">Terms of Service</h1>
+        <p class="text-zinc-500 font-bold">Last Updated: {{ currentDate | date:'longDate' }}</p>
+    </header>
+
+    <div class="prose prose-lg max-w-none text-zinc-700 font-medium leading-relaxed">
+        <div class="mb-8 p-6 bg-red-50 border-2 border-red-100 rounded-2xl">
+            <h2 class="text-red-900 font-black uppercase text-xl mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined">credit_card</span>
+                Priority Clause: Virtual Card Usage
+            </h2>
+            <p class="text-red-800 font-bold">
+                The JA Relief Virtual Identity and Aid Card is strictly approved for use ONLY at authorized merchants, including:
+            </p>
+            <ul class="mt-4 list-disc list-inside text-red-700 font-black">
+                <li>Designated Supermarkets & Grocery Stores</li>
+                <li>Authorized Hardware Stores for reconstruction materials</li>
+                <li>Registered Medical Offices & Pharmacies</li>
+            </ul>
+            <p class="mt-4 text-xs text-red-600 italic">
+                Any attempt to use the card at unauthorized vendors will result in immediate suspension of relief benefits.
+            </p>
+        </div>
+
+        <h2 class="text-2xl font-black text-zinc-900 mb-4 uppercase">1. Acceptance of Terms</h2>
+        <p class="mb-6">
+            By registering for JA Relief, you agree to abide by all protocols established by the Office of Disaster Preparedness and Emergency Management (ODPEM).
+        </p>
+
+        <h2 class="text-2xl font-black text-zinc-900 mb-4 uppercase">2. Use of Information</h2>
+        <p class="mb-6">
+            Data collected through this platform is used solely for the coordination of disaster relief and emergency medical services under the Jamaica Data Protection Act (JDPA).
+        </p>
+
+        <h2 class="text-2xl font-black text-zinc-900 mb-4 uppercase">3. Reporting Accuracy</h2>
+        <p class="mb-6">
+            Survivors agree to provide accurate information regarding damage levels and medical needs. False reporting is a violation of these terms.
+        </p>
+    </div>
+
+    <footer class="mt-12 pt-8 border-t border-zinc-100 flex justify-center">
+        <a routerLink="/register" class="bg-black text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-zinc-800 transition-all">
+            Return to Registration
+        </a>
+    </footer>
+</section>

@@ -1,0 +1,41 @@
+.terms-container {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1, h2, h3 {
+    font-family: 'Lexend', sans-serif;
+}
+
+p, li {
+    font-family: 'Inter', sans-serif;
+}
+
+ul li {
+    margin-bottom: 0.5rem;
+}
+
+:host-context(.dark-theme) .terms-container {
+    background: #000;
+    border-color: #39FF14;
+}
+
+:host-context(.dark-theme) h1, 
+:host-context(.dark-theme) h2,
+:host-context(.dark-theme) .text-red-900 {
+    color: #39FF14 !important;
+}
+
+:host-context(.dark-theme) p,
+:host-context(.dark-theme) li {
+    color: #fff !important;
+}
+
+:host-context(.dark-theme) .bg-red-50 {
+    background: #0b130b !important;
+    border-color: #39FF14 !important;
+}

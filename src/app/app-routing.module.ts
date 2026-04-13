@@ -24,6 +24,7 @@ const routes: Routes = [
     { path: 'information', loadChildren: () => import('./pages/info/info.module').then(m => m.InfoModule), data: { breadcrumb: 'Information' } },
     { path: 'sitemap', loadChildren: () => import('./pages/sitemap/sitemap.module').then(m => m.SitemapModule), data: { breadcrumb: 'Sitemap' } },
     { path: 'privacy', loadChildren: () => import('./pages/privacy/privacy.module').then(m => m.PrivacyModule), data: { breadcrumb: 'Privacy Statement' } },
+    { path: 'terms', loadChildren: () => import('./pages/terms/terms.module').then(m => m.TermsModule), data: { breadcrumb: 'Terms of Service' } },
     { path: 'admin', loadChildren: () => import('./pages/admin/admin.module').then(m => m.AdminModule), canActivate: [AuthGuard], data: { roles: ['admin'], breadcrumb: 'Admin Portal' } },
     { path: 'maintenance', loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule), data: { breadcrumb: 'System Status' } },
     { path: '**', redirectTo: '' }
