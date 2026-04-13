@@ -1,5 +1,16 @@
 <header class="header">
-    <h1>Welcome to JA RELIEF</h1>
+    <h1 class="relative">
+      Welcome to JA RELIEF
+      <!-- Offline Badge -->
+      <span *ngIf="!isOnline" 
+            class="absolute -bottom-2 right-0 px-2 py-0.5 bg-red-600 text-[8px] font-black uppercase tracking-widest rounded-full shadow-lg animate-pulse border border-white/20">
+        OFFLINE MODE
+      </span>
+      <span *ngIf="isOnline" 
+            class="absolute -bottom-2 right-0 px-2 py-0.5 bg-[#39FF14] text-black text-[8px] font-black uppercase tracking-widest rounded-full shadow-lg border border-black/10">
+        ENCRYPTED LIVE
+      </span>
+    </h1>
 
     <nav role="navigation" aria-label="Main Navigation" class="flex flex-wrap items-center gap-3">
         <a routerLink="/" aria-label="Go to Home Page" class="nav-home">
@@ -51,6 +62,13 @@
         <button (click)="toggleDarkMode()" class="theme-toggle-btn">
             <span [class]="isDarkMode ? 'icon-light' : 'icon-dark'" aria-hidden="true"></span>
             <span class="btn-text">{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
+        </button>
+
+        <!-- PWA INSTALL BUTTON -->
+        <button *ngIf="showInstallButton" (click)="installApp()" 
+                class="bg-[#ffbb16] hover:bg-black hover:text-white text-black px-4 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-widest flex items-center gap-2 border-b-4 border-black/30 transition-all shadow-xl active:scale-95 active:border-b-0 translate-y-[-2px] active:translate-y-0">
+            <span class="material-symbols-outlined text-sm">download_for_offline</span>
+            INSTALL APP
         </button>
     </nav>
 </header>

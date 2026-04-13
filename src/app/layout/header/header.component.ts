@@ -12,6 +12,9 @@ export class HeaderComponent implements OnInit {
   isDarkMode = false;
   isListening = false;
   currentVoiceMode: 'command' | 'dictation' | 'none' = 'none';
+  deferredPrompt: any;
+  showInstallButton = false;
+  isOnline = navigator.onLine;
   get currentUser(): User | null {
     // Zero-Dependency Bridge: Read directly from local storage
     const saved = localStorage.getItem('survivor_user');
@@ -55,6 +58,24 @@ export class HeaderComponent implements OnInit {
       this.cdr.detectChanges();
     });
 
+    // PWA Install Logic
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      this.showInstallButton = true;
+      this.cdr.detectChanges();
+    });
+
+    // Online/Offline Monitoring
+    window.addEventListener('online', () => {
+      this.isOnline = true;
+      this.cdr.detectChanges();
+    });
+    window.addEventListener('offline', () => {
+      this.isOnline = false;
+      this.cdr.detectChanges();
+    });
+
     // High-Frequency Sync Heartbeat (Force refresh logout button)
     setInterval(() => {
        this.cdr.detectChanges();
@@ -83,6 +104,19 @@ export class HeaderComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  installApp(): void {
+    if (!this.deferredPrompt) return;
+    this.deferredPrompt.prompt();
+    this.deferredPrompt.userChoice.then((choiceResult: any) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+        this.showInstallButton = false;
+      }
+      this.deferredPrompt = null;
+      this.cdr.detectChanges();
+    });
   }
 }
 

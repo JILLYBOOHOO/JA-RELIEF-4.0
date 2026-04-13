@@ -166,7 +166,7 @@ async function init() {
     const [existingKatie] = await connection.query('SELECT * FROM survivors WHERE idNumber = ?', ['KATIE-777']);
     if (existingKatie.length === 0) {
       const userHash = await bcrypt.hash(userPwd, 10);
-      const { generateCardNumber, generateCVV, generatePIN } = require('../utils/card.util');
+      const { generateCardNumber, generateCVV, generatePIN } = require('./utils/card.util');
       await connection.query(`
         INSERT INTO survivors (fullName, contact, idNumber, password, parish, cardNumber, cvv, pin, balance)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)

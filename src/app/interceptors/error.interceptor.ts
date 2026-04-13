@@ -24,6 +24,9 @@ export class ErrorInterceptor implements HttpInterceptor {
         
         // Handle connection issues (status 0)
         if (err.status === 0) {
+          if (!navigator.onLine) {
+            return throwError(() => 'DEVICE OFFLINE: You are currently disconnected from the internet. JA RELIEF is running in Offline Mode.');
+          }
           return throwError(() => 'Unable to connect to the JA RELIEF server. Please ensure the backend is running or check your internet connection.');
         }
 
