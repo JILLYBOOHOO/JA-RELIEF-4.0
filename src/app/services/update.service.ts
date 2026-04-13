@@ -17,18 +17,18 @@ export class UpdateService {
     private updatesSubject = new BehaviorSubject<AlertUpdate[]>([
         {
             id: '1',
-            title: 'Current Weather Situation',
+            title: 'Early Wet Season Outlook',
             source: 'Jamaica Meteorological Service',
-            time: 'March 18, 2026 - 1:30 PM',
-            content: 'Light rain expected across most parishes. No active flash flood warnings at this time.',
+            time: 'April 13, 2026 - 9:45 AM',
+            content: 'Projection for April/May shows below-normal rainfall. Isolated afternoon thunderstorms expected in northern and inland parishes. Daytime highs: 32°C.',
             status: 'info'
         },
         {
             id: '2',
-            title: 'Preparedness Notice',
+            title: 'Hydration & Heat Advisory',
             source: 'ODPEM',
             time: 'Ongoing',
-            content: 'Residents in flood-prone areas should remain vigilant and monitor local weather reports.',
+            content: 'Due to rising temperatures and dry conditions, residents are advised to conserve water and ensure vulnerable seniors remain hydrated.',
             status: 'warning'
         }
     ]);
