@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { WeatherService, WeatherState } from '../../services/weather.service';
 import { UpdateService, AlertUpdate } from '../../services/update.service';
+import { HazardService, HazardReport } from '../../services/hazard.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -11,17 +12,29 @@ import { Subscription } from 'rxjs';
 export class InfoComponent implements OnInit, OnDestroy {
     currentWeather: WeatherState = 'sunny';
     updates: AlertUpdate[] = [];
+    verifiedHazards: HazardReport[] = [];
     showHazardModal = false;
     private sub = new Subscription();
 
     constructor(
         private weatherService: WeatherService,
-        private updateService: UpdateService
+        private updateService: UpdateService,
+        private hazardService: HazardService
     ) { }
 
     ngOnInit() {
         this.sub.add(this.weatherService.weather$.subscribe(w => this.currentWeather = w));
         this.sub.add(this.updateService.updates$.subscribe(u => this.updates = u));
+        this.loadVerifiedHazards();
+    }
+
+    private loadVerifiedHazards() {
+        this.hazardService.getAllReports().subscribe({
+            next: (reports) => {
+                this.verifiedHazards = reports.filter(r => r.status === 'verified');
+            },
+            error: (err) => console.error('Error fetching hazards', err)
+        });
     }
 
     ngOnDestroy() {

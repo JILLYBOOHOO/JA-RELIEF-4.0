@@ -48,7 +48,34 @@
             </div>
         </div>
 
-        <!-- 2. Emergency Contacts -->
+        <!-- 2. Community Danger Zones (Admin Verified) -->
+        <div class="verified-hazards card mb-8" *ngIf="verifiedHazards.length > 0">
+            <div class="card-header border-b border-zinc-100 bg-amber-50">
+                <h2 class="flex items-center gap-2 text-amber-900">
+                    <span class="material-symbols-outlined text-amber-600">notification_important</span>
+                    Community Danger Zones (Verified)
+                </h2>
+                <span class="text-[10px] font-black uppercase text-amber-700/60">Updates from Citizens & ODPEM</span>
+            </div>
+            <div class="hazard-list p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div *ngFor="let hazard of verifiedHazards" class="hazard-card p-4 border-2 border-amber-100 bg-white rounded-xl shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-[10px] font-black uppercase tracking-wider">
+                            {{ hazard.dangerType }}
+                        </span>
+                        <span class="text-[10px] text-zinc-400 font-bold uppercase">{{ hazard.createdAt | date:'short' }}</span>
+                    </div>
+                    <h4 class="font-black text-zinc-900 text-sm mb-1">{{ hazard.location }}</h4>
+                    <p class="text-xs text-zinc-600 leading-relaxed">{{ hazard.description }}</p>
+                    <div class="mt-3 flex items-center gap-2 text-[10px] font-bold text-emerald-600">
+                        <span class="material-symbols-outlined text-xs">verified</span>
+                        OFFICIALLY VERIFIED
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Emergency Contacts -->
         <div class="contacts-grid">
             <div class="contact-card card" *ngFor="let contact of emergencyContacts">
                 <div class="contact-icon">{{ contact.icon }}</div>
