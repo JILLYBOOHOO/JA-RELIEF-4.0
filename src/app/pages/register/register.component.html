@@ -216,6 +216,17 @@
         </label>
     </div>
 
+    <!-- JDPA/GDPR Mandatory Consent -->
+    <div class="form-checkbox mb-6 border-zinc-200 bg-zinc-50">
+        <input type="checkbox" id="termsConsent" formControlName="termsConsent"
+            aria-label="I agree to the Terms of Service and Privacy Policy"
+            (focus)="speakField('Protocol Agreement', 'Please agree to the terms of service and privacy policy to continue.')" />
+        <label for="termsConsent" class="text-zinc-900">
+            I agree to the <a routerLink="/information" class="text-emerald-700 underline font-black">Terms of Service</a> and 
+            <a routerLink="/privacy" class="text-emerald-700 underline font-black">Privacy Policy</a>. *
+        </label>
+    </div>
+
     <div class="form-group">
         <label for="password">Create Password *</label>
         <p class="field-hint">Min 6 chars. Avoid simple sequences like 1234 or aaaa.</p>
@@ -229,6 +240,9 @@
         </div>
         <div *ngIf="survivorForm.get('password')?.errors?.['simplePassword'] && survivorForm.get('password')?.touched" class="field-error-msg">
             Password is too simple. Do not use common sequences or repetitive characters.
+        </div>
+        <div *ngIf="survivorForm.get('termsConsent')?.errors?.['required'] && survivorForm.get('termsConsent')?.touched" class="field-error-msg">
+            You must agree to the protocols to register.
         </div>
     </div>
 

@@ -109,7 +109,8 @@ export class RegisterComponent implements OnInit {
         address: 'Address',
         dob: 'Date of Birth',
         damageLevel: 'Damage Level',
-        password: 'Password'
+        password: 'Password',
+        termsConsent: 'Privacy & Terms Agreement'
     };
     return labels[key] || key;
   }
@@ -149,6 +150,7 @@ export class RegisterComponent implements OnInit {
       preferredDoctorName: [''],
       doctorContactNumber: [''],
       medicalConsent: [false],
+      termsConsent: [false, Validators.requiredTrue],
       website: [''] // Honeypot field
     });
 
